@@ -1,0 +1,21 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "mountain-rescue-rvir",
+          "appId": "1:357889053473:android:0a42256bbbfd34b6ec6460",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "mountain-rescue-rvir",
+          "configurations": {
+            "android": "1:357889053473:android:0a42256bbbfd34b6ec6460"
+          }
+        }
+      }
+    }
+  }
+}

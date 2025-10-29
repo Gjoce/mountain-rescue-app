@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "357889053473",
+    "project_id": "mountain-rescue-rvir",
+    "storage_bucket": "mountain-rescue-rvir.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:357889053473:android:0a42256bbbfd34b6ec6460",
+        "android_client_info": {
+          "package_name": "com.example.mountain_rescue"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCH47Q5hAlfSFVtAbF5pbPezn6w2KsGOkc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
