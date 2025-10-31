@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../state/providers/auth_provider.dart';
+import 'admin_settings_screen.dart';
+import 'admin_injuries_screen.dart';
 
 class AdminHomeScreen extends ConsumerWidget {
   const AdminHomeScreen({super.key});
@@ -257,9 +259,10 @@ class AdminHomeScreen extends ConsumerWidget {
                             colors: [Color(0xFF5E35B1), Color(0xFF4527A0)],
                           ),
                           onTap: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Opening injury list...'),
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const AdminInjuriesScreen(),
                               ),
                             );
                           },
@@ -327,9 +330,10 @@ class AdminHomeScreen extends ConsumerWidget {
                                 color: const Color(0xFF5E35B1),
                                 isDark: isDark,
                                 onTap: () {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('Opening settings...'),
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => const AdminSettingsScreen(),
                                     ),
                                   );
                                 },

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../state/providers/auth_provider.dart';
+import 'past_injuries_screen.dart';
+import 'settings_screen.dart';
 
 class RescuerHomeScreen extends ConsumerWidget {
   const RescuerHomeScreen({super.key});
@@ -214,10 +216,16 @@ class RescuerHomeScreen extends ConsumerWidget {
                               isDark: isDark,
                               onTap: () {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Opening injury history...'),
-                                  ),
+                                  const SnackBar(content: Text('Opening injury history...')),
                                 );
+
+                                // Delay a bit so the Snackbar shows, then navigate
+                                Future.delayed(const Duration(milliseconds: 300), () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (_) => const PastInjuriesScreen()),
+                                  );
+                                });
                               },
                             ),
                             _ActionCard(
@@ -226,10 +234,9 @@ class RescuerHomeScreen extends ConsumerWidget {
                               color: const Color(0xFF5E35B1),
                               isDark: isDark,
                               onTap: () {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Opening settings...'),
-                                  ),
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(builder: (_) => const RescuerSettingsScreen()),
                                 );
                               },
                             ),
