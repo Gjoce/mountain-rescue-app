@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../state/providers/auth_provider.dart';
 import 'admin_settings_screen.dart';
 import 'admin_injuries_screen.dart';
+import 'add_rescuer_screen.dart';
+import 'manage_rescuers_screen.dart';
 
 class AdminHomeScreen extends ConsumerWidget {
   const AdminHomeScreen({super.key});
@@ -292,11 +294,10 @@ class AdminHomeScreen extends ConsumerWidget {
                                 colors: [Color(0xFF43A047), Color(0xFF388E3C)],
                               ),
                               onTap: () {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      'Opening rescuer registration...',
-                                    ),
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const AddRescuerScreen(),
                                   ),
                                 );
                               },
@@ -311,11 +312,11 @@ class AdminHomeScreen extends ConsumerWidget {
                                 colors: [Color(0xFFFB8C00), Color(0xFFF57C00)],
                               ),
                               onTap: () {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                      'Opening rescuer management...',
-                                    ),
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) =>
+                                        const ManageRescuersScreen(),
                                   ),
                                 );
                               },
