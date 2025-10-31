@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../state/providers/auth_provider.dart';
+import '../injuries/register_injury.dart';
 import 'past_injuries_screen.dart';
 import 'settings_screen.dart';
 
@@ -37,7 +38,7 @@ class RescuerHomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final user = ref.watch(firebaseAuthStateProvider).value;
+    final userAsync = ref.watch(currentUserProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
@@ -60,227 +61,248 @@ class RescuerHomeScreen extends ConsumerWidget {
           ),
         ),
         child: SafeArea(
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: userAsync.when(
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (err, _) => Center(
+              child: Text(
+                'Error loading user',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+            data: (user) {
+              final rescuerName = user?.name ?? "Rescuer";
+
+              return Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
                       children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              'Welcome Back',
-                              style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.9),
-                                fontSize: 16,
-                              ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Welcome Back',
+                                  style: TextStyle(
+                                    color: Colors.white.withValues(alpha: 0.9),
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  rescuerName,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
                             ),
-                            const SizedBox(height: 4),
-                            Text(
-                              user?.displayName ?? 'Rescuer',
-                              style: const TextStyle(
+                            Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.2),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const Icon(
+                                Icons.landscape,
                                 color: Colors.white,
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
+                                size: 32,
                               ),
                             ),
                           ],
                         ),
+                        const SizedBox(height: 16),
                         Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.2),
-                            borderRadius: BorderRadius.circular(12),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
                           ),
-                          child: const Icon(
-                            Icons.landscape,
-                            color: Colors.white,
-                            size: 32,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: Colors.white.withValues(alpha: 0.3),
+                              width: 1,
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.medical_services,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                              const SizedBox(width: 12),
+                              const Text(
+                                'Ski Patrol Rescuer',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              const Spacer(),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.green,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: const Text(
+                                  'ACTIVE',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.3),
-                          width: 1,
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          const Icon(
-                            Icons.medical_services,
-                            color: Colors.white,
-                            size: 20,
-                          ),
-                          const SizedBox(width: 12),
-                          const Text(
-                            'Ski Patrol Rescuer',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          const Spacer(),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.green,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: const Text(
-                              'ACTIVE',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF1E1E1E) : Colors.grey[50],
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(30),
-                      topRight: Radius.circular(30),
-                    ),
                   ),
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(24),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Text(
-                          'Quick Actions',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: isDark ? Colors.white : Colors.grey[800],
-                          ),
-                        ),
-                        const SizedBox(height: 20),
 
-                        _PrimaryActionCard(
-                          icon: Icons.add_circle,
-                          title: 'Register an Injury',
-                          subtitle: 'Report a new incident on the slopes',
-                          gradient: const LinearGradient(
-                            colors: [Color(0xFFE53935), Color(0xFFD32F2F)],
-                          ),
-                          onTap: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Opening injury registration...'),
-                              ),
-                            );
-                          },
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: isDark
+                            ? const Color(0xFF1E1E1E)
+                            : Colors.grey[50],
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(30),
+                          topRight: Radius.circular(30),
                         ),
-                        const SizedBox(height: 16),
-
-                        GridView.count(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          crossAxisCount: 2,
-                          mainAxisSpacing: 16,
-                          crossAxisSpacing: 16,
-                          childAspectRatio: 1.1,
+                      ),
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.all(24),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            _ActionCard(
-                              icon: Icons.history,
-                              title: 'Past Injuries',
-                              color: const Color(0xFF1565C0),
-                              isDark: isDark,
-                              onTap: () {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('Opening injury history...')),
-                                );
-
-                                // Delay a bit so the Snackbar shows, then navigate
-                                Future.delayed(const Duration(milliseconds: 300), () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (_) => const PastInjuriesScreen()),
-                                  );
-                                });
-                              },
+                            Text(
+                              'Quick Actions',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: isDark ? Colors.white : Colors.grey[800],
+                              ),
                             ),
-                            _ActionCard(
-                              icon: Icons.settings,
-                              title: 'Settings',
-                              color: const Color(0xFF5E35B1),
-                              isDark: isDark,
+                            const SizedBox(height: 20),
+
+                            _PrimaryActionCard(
+                              icon: Icons.add_circle,
+                              title: 'Register an Injury',
+                              subtitle: 'Report a new incident on the slopes',
+                              gradient: const LinearGradient(
+                                colors: [Color(0xFFE53935), Color(0xFFD32F2F)],
+                              ),
                               onTap: () {
                                 Navigator.push(
                                   context,
-                                  MaterialPageRoute(builder: (_) => const RescuerSettingsScreen()),
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const InjuryRegistrationScreen(),
+                                  ),
                                 );
                               },
                             ),
+
+                            const SizedBox(height: 16),
+
+                            GridView.count(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              crossAxisCount: 2,
+                              mainAxisSpacing: 16,
+                              crossAxisSpacing: 16,
+                              childAspectRatio: 1.1,
+                              children: [
+                                _ActionCard(
+                                  icon: Icons.history,
+                                  title: 'Past Injuries',
+                                  color: const Color(0xFF1565C0),
+                                  isDark: isDark,
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) =>
+                                            const PastInjuriesScreen(),
+                                      ),
+                                    );
+                                  },
+                                ),
+                                _ActionCard(
+                                  icon: Icons.settings,
+                                  title: 'Settings',
+                                  color: const Color(0xFF5E35B1),
+                                  isDark: isDark,
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) =>
+                                            const RescuerSettingsScreen(),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ],
+                            ),
+
+                            const SizedBox(height: 24),
+
+                            OutlinedButton.icon(
+                              onPressed: () => _showLogoutDialog(context, ref),
+                              icon: const Icon(Icons.logout),
+                              label: const Text('Log Out'),
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: isDark
+                                    ? Colors.red[300]
+                                    : Colors.red[700],
+                                side: BorderSide(
+                                  color: isDark
+                                      ? Colors.red[300]!
+                                      : Colors.red[700]!,
+                                  width: 2,
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                            ),
+
+                            const SizedBox(height: 16),
+
+                            Center(
+                              child: Text(
+                                'Mountain Rescue • Ski Patrol System',
+                                style: TextStyle(
+                                  color: Colors.grey[500],
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
                           ],
                         ),
-                        const SizedBox(height: 24),
-
-                        OutlinedButton.icon(
-                          onPressed: () => _showLogoutDialog(context, ref),
-                          icon: const Icon(Icons.logout),
-                          label: const Text('Log Out'),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: isDark
-                                ? Colors.red[300]
-                                : Colors.red[700],
-                            side: BorderSide(
-                              color: isDark
-                                  ? Colors.red[300]!
-                                  : Colors.red[700]!,
-                              width: 2,
-                            ),
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-
-                        Center(
-                          child: Text(
-                            'Mountain Rescue • Ski Patrol System',
-                            style: TextStyle(
-                              color: Colors.grey[500],
-                              fontSize: 12,
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
-                ),
-              ),
-            ],
+                ],
+              );
+            },
           ),
         ),
       ),

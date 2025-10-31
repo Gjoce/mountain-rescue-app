@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -19,8 +18,7 @@ class RescuerSettingsScreen extends ConsumerStatefulWidget {
       _RescuerSettingsScreenState();
 }
 
-class _RescuerSettingsScreenState
-    extends ConsumerState<RescuerSettingsScreen> {
+class _RescuerSettingsScreenState extends ConsumerState<RescuerSettingsScreen> {
   final user = FirebaseAuth.instance.currentUser!;
   bool _isDark = false;
 
@@ -39,8 +37,9 @@ class _RescuerSettingsScreenState
         ),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel')),
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
           ElevatedButton(
             onPressed: () async {
               final newName = controller.text.trim();
@@ -64,37 +63,12 @@ class _RescuerSettingsScreenState
     );
   }
 
-  Future<void> _changeProfilePhoto() async {
-    final picker = ImagePicker();
-    final image = await picker.pickImage(source: ImageSource.gallery);
-    if (image == null) return;
-
-    final file = File(image.path);
-    final ref = FirebaseStorage.instance
-        .ref()
-        .child('profile_photos')
-        .child('${user.uid}.jpg');
-
-    await ref.putFile(file);
-    final url = await ref.getDownloadURL();
-
-    await user.updatePhotoURL(url);
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(user.uid)
-        .update({'photoUrl': url});
-
-    setState(() {});
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Profile photo updated')),
-    );
-  }
-
   Future<void> _resetPassword(BuildContext context) async {
     await FirebaseAuth.instance.sendPasswordResetEmail(email: user.email!);
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-          content: Text('Password reset email sent. Check your inbox.')),
+        content: Text('Password reset email sent. Check your inbox.'),
+      ),
     );
   }
 
@@ -115,21 +89,27 @@ class _RescuerSettingsScreenState
           child: pw.Column(
             crossAxisAlignment: pw.CrossAxisAlignment.start,
             children: [
-              pw.Text('Mountain Rescue - User Report',
-                  style: pw.TextStyle(
-                    fontSize: 24,
-                    fontWeight: pw.FontWeight.bold,
-                    color: PdfColors.blue900,
-                  )),
+              pw.Text(
+                'Mountain Rescue - User Report',
+                style: pw.TextStyle(
+                  fontSize: 24,
+                  fontWeight: pw.FontWeight.bold,
+                  color: PdfColors.blue900,
+                ),
+              ),
               pw.SizedBox(height: 16),
-              pw.Text('Generated on: ${DateFormat.yMMMMd().format(DateTime.now())}'),
+              pw.Text(
+                'Generated on: ${DateFormat.yMMMMd().format(DateTime.now())}',
+              ),
               pw.Divider(),
               pw.SizedBox(height: 20),
               ...userData.entries.map(
-                    (e) => pw.Padding(
+                (e) => pw.Padding(
                   padding: const pw.EdgeInsets.symmetric(vertical: 6),
-                  child: pw.Text('${e.key}: ${e.value}',
-                      style: const pw.TextStyle(fontSize: 16)),
+                  child: pw.Text(
+                    '${e.key}: ${e.value}',
+                    style: const pw.TextStyle(fontSize: 16),
+                  ),
                 ),
               ),
             ],
@@ -174,7 +154,6 @@ class _RescuerSettingsScreenState
                 child: Column(
                   children: [
                     GestureDetector(
-                      onTap: _changeProfilePhoto,
                       child: CircleAvatar(
                         radius: 48,
                         backgroundImage: user.photoURL != null
@@ -182,8 +161,11 @@ class _RescuerSettingsScreenState
                             : null,
                         backgroundColor: Colors.white,
                         child: user.photoURL == null
-                            ? const Icon(Icons.person,
-                            color: Color(0xFF1565C0), size: 48)
+                            ? const Icon(
+                                Icons.person,
+                                color: Color(0xFF1565C0),
+                                size: 48,
+                              )
                             : null,
                       ),
                     ),
@@ -191,14 +173,17 @@ class _RescuerSettingsScreenState
                     Text(
                       user.displayName ?? 'Unnamed Rescuer',
                       style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold),
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     Text(
                       user.email ?? '',
                       style: TextStyle(
-                          color: Colors.white.withOpacity(0.9), fontSize: 14),
+                        color: Colors.white.withOpacity(0.9),
+                        fontSize: 14,
+                      ),
                     ),
                     const SizedBox(height: 20),
                     ElevatedButton.icon(
@@ -216,15 +201,18 @@ class _RescuerSettingsScreenState
               const SizedBox(height: 30),
               ListTile(
                 leading: const Icon(Icons.dark_mode, color: Colors.white),
-                title: const Text('Dark Mode',
-                    style: TextStyle(color: Colors.white)),
+                title: const Text(
+                  'Dark Mode',
+                  style: TextStyle(color: Colors.white),
+                ),
                 trailing: Switch(
                   value: _isDark,
                   onChanged: (_) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content:
-                        Text('System theme toggle works automatically.'),
+                        content: Text(
+                          'System theme toggle works automatically.',
+                        ),
                       ),
                     );
                   },
@@ -233,35 +221,43 @@ class _RescuerSettingsScreenState
               const Divider(color: Colors.white54),
               ListTile(
                 leading: const Icon(Icons.lock_outline, color: Colors.white),
-                title: const Text('Change Password',
-                    style: TextStyle(color: Colors.white)),
+                title: const Text(
+                  'Change Password',
+                  style: TextStyle(color: Colors.white),
+                ),
                 onTap: () => _resetPassword(context),
               ),
               ListTile(
                 leading: const Icon(Icons.picture_as_pdf, color: Colors.white),
-                title: const Text('Export My Data (PDF)',
-                    style: TextStyle(color: Colors.white)),
+                title: const Text(
+                  'Export My Data (PDF)',
+                  style: TextStyle(color: Colors.white),
+                ),
                 onTap: _exportUserData,
               ),
               ListTile(
                 leading: const Icon(Icons.info_outline, color: Colors.white),
-                title: const Text('About App',
-                    style: TextStyle(color: Colors.white)),
+                title: const Text(
+                  'About App',
+                  style: TextStyle(color: Colors.white),
+                ),
                 onTap: () {
                   showAboutDialog(
                     context: context,
                     applicationName: 'Mountain Rescue',
                     applicationVersion: '1.2.0',
                     applicationLegalese:
-                    '© 2025 Mountain Rescue Team. All rights reserved.',
+                        '© 2025 Mountain Rescue Team. All rights reserved.',
                   );
                 },
               ),
               const Divider(color: Colors.white54),
               ListTile(
                 leading: const Icon(Icons.logout, color: Colors.redAccent),
-                title: const Text('Logout',
-                    style: TextStyle(color: Colors.redAccent)),
+                title: const Text(
+                  'Logout',
+                  style: TextStyle(color: Colors.redAccent),
+                ),
                 onTap: () => _logout(context, ref),
               ),
             ],
