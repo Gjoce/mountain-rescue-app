@@ -12,7 +12,8 @@ class InjuryRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final String _collectionName = 'injuries';
   final String bucketName = 'injury-files';
-  final String apiUrl = "http://10.0.2.2:4000/injuries";
+  final String apiUrl =
+      "https://hrghcaaqxkznzpwexuaq.supabase.co/functions/v1/upload_injury_photo";
 
   Stream<List<Injury>> getInjuriesByRescuer(String rescuerId) {
     return _firestore
@@ -218,6 +219,9 @@ class InjuryRepository {
       ),
     );
 
+    request.headers["Authorization"] =
+        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhyZ2hjYWFxeGt6bnpwd2V4dWFxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE5MTcyMTUsImV4cCI6MjA3NzQ5MzIxNX0.rBvDfhjFOM-crmmZ_csEh63fnQYYfR2StGPmlt8CcTc";
+
     final response = await request.send();
     final body = await response.stream.bytesToString();
 
@@ -226,10 +230,9 @@ class InjuryRepository {
     }
 
     final Map<String, dynamic> json = jsonDecode(body);
-    final filePath = json['filePath'];
 
-    final bucketName = 'injury-files';
-    final supabaseUrl = 'https://hrghcaaqxkznzpwexuaq.supabase.co';
-    return '$supabaseUrl/storage/v1/object/public/$bucketName/$filePath';
+    final String publicUrl = json['filePath'] as String;
+
+    return publicUrl;
   }
 }
