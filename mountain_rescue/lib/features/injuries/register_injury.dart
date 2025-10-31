@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:mountain_rescue/data/models/injury_model.dart';
 import 'package:mountain_rescue/data/repositories/injury_repository.dart';
 import '../../state/providers/auth_provider.dart';
@@ -19,6 +20,7 @@ class _InjuryRegistrationScreenState
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _commentController = TextEditingController();
+  Uint8List? _idPhotoBytes;
 
   String? _selectedSkiRun;
   DateTime? _birthDate;
@@ -110,6 +112,40 @@ class _InjuryRegistrationScreenState
     'Dislocation',
     'Other',
   ];
+
+  Future<void> _pickIdPhoto() async {
+    final ImagePicker picker = ImagePicker();
+
+    final XFile? pickedFile = await picker.pickImage(
+      source: await _showImageSourceDialog(),
+      maxWidth: 1024,
+      maxHeight: 1024,
+    );
+
+    if (pickedFile != null) {
+      final bytes = await pickedFile.readAsBytes();
+      setState(() => _idPhotoBytes = bytes);
+    }
+  }
+
+  Future<ImageSource> _showImageSourceDialog() async {
+    return showDialog<ImageSource>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Choose image source'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, ImageSource.camera),
+            child: const Text('Camera'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, ImageSource.gallery),
+            child: const Text('Gallery'),
+          ),
+        ],
+      ),
+    ).then((value) => value ?? ImageSource.gallery);
+  }
 
   @override
   void initState() {
@@ -235,6 +271,15 @@ class _InjuryRegistrationScreenState
 
       final repo = InjuryRepository();
       final docId = await repo.createInjury(injury.toMap());
+
+      if (_idPhotoBytes != null) {
+        try {
+          final photoUrl = await repo.uploadIdPhoto(docId, _idPhotoBytes!);
+          await repo.updateInjury(docId, {'photoUrl': photoUrl});
+        } catch (uploadError) {
+          throw Exception('Failed to upload ID photo: $uploadError');
+        }
+      }
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -494,8 +539,48 @@ class _InjuryRegistrationScreenState
                   ),
                 ],
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 12),
+              Text('ID Photo', style: TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 8),
+              GestureDetector(
+                onTap: _pickIdPhoto,
+                child: Container(
+                  height: 150,
+                  decoration: BoxDecoration(
+                    color: isDark ? const Color(0xFF2A2A2A) : Colors.grey[200],
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.grey),
+                  ),
+                  child: _idPhotoBytes != null
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const [
+                            Icon(
+                              Icons.check_circle,
+                              color: Colors.green,
+                              size: 32,
+                            ),
+                            SizedBox(width: 8),
+                            Text(
+                              'Image added',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        )
+                      : const Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.camera_alt, size: 40),
+                              SizedBox(height: 8),
+                              Text('Tap to choose camera or gallery'),
+                            ],
+                          ),
+                        ),
+                ),
+              ),
 
+              const SizedBox(height: 22),
               // Submit Button
               SizedBox(
                 height: 56,

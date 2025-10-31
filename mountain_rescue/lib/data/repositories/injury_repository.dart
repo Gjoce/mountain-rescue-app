@@ -1,9 +1,19 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../models/injury_model.dart';
+import 'dart:typed_data';
+// ignore: depend_on_referenced_packages
+import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 
 class InjuryRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final String _collectionName = 'injuries';
+  final String bucketName = 'injury-files';
+  final String apiUrl =
+      "https://hrghcaaqxkznzpwexuaq.supabase.co/functions/v1/upload_injury_photo";
 
   Stream<List<Injury>> getInjuriesByRescuer(String rescuerId) {
     return _firestore
@@ -186,5 +196,43 @@ class InjuryRepository {
     } catch (e) {
       throw Exception('Failed to get statistics: $e');
     }
+  }
+
+  Future<String> uploadIdPhoto(String injuryId, Uint8List fileBytes) async {
+    final user = FirebaseAuth.instance.currentUser;
+    final userId = user?.uid;
+
+    final request = http.MultipartRequest(
+      "POST",
+      Uri.parse("$apiUrl/upload-id-photo"),
+    );
+
+    request.fields["injuryId"] = injuryId;
+    request.fields["userId"] = userId!;
+
+    request.files.add(
+      http.MultipartFile.fromBytes(
+        "file",
+        fileBytes,
+        filename: "id_photo.jpg",
+        contentType: MediaType("image", "jpeg"),
+      ),
+    );
+
+    request.headers["Authorization"] =
+        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhyZ2hjYWFxeGt6bnpwd2V4dWFxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE5MTcyMTUsImV4cCI6MjA3NzQ5MzIxNX0.rBvDfhjFOM-crmmZ_csEh63fnQYYfR2StGPmlt8CcTc";
+
+    final response = await request.send();
+    final body = await response.stream.bytesToString();
+
+    if (response.statusCode != 200) {
+      throw Exception("File upload failed -> $body");
+    }
+
+    final Map<String, dynamic> json = jsonDecode(body);
+
+    final String publicUrl = json['filePath'] as String;
+
+    return publicUrl;
   }
 }
