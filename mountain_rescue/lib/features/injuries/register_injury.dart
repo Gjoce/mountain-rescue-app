@@ -390,7 +390,29 @@ class _InjuryRegistrationScreenState
                       ],
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10),
+
+                  // R and L Labels positioned above the body diagram
+                  SizedBox(
+                    height: 60,
+                    child: Stack(
+                      children: [
+                        Positioned(
+                          left: 20,
+                          top: 0,
+                          bottom: 0,
+                          child: Center(child: _buildSideLabel('R', isDark)),
+                        ),
+                        Positioned(
+                          right: 20,
+                          top: 0,
+                          bottom: 0,
+                          child: Center(child: _buildSideLabel('L', isDark)),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 10),
 
                   if (_selectedRegion != null) ...[
                     ElevatedButton.icon(
@@ -549,6 +571,50 @@ class _InjuryRegistrationScreenState
             ],
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildSideLabel(String label, bool isDark) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Colors.white, Colors.grey.shade50],
+        ),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade300, width: 2),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
+            spreadRadius: 0,
+          ),
+          BoxShadow(
+            color: Colors.white.withValues(alpha: 0.8),
+            blurRadius: 8,
+            offset: const Offset(-2, -2),
+          ),
+        ],
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: 24,
+          fontWeight: FontWeight.w700,
+          color: Colors.grey.shade800,
+          letterSpacing: 1.5,
+          shadows: [
+            Shadow(
+              color: Colors.black.withValues(alpha: 0.1),
+              offset: const Offset(0, 1),
+              blurRadius: 2,
+            ),
+          ],
+        ),
       ),
     );
   }
