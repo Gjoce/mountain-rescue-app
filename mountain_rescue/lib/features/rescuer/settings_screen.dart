@@ -1,9 +1,7 @@
-import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -22,11 +20,14 @@ class _RescuerSettingsScreenState extends ConsumerState<RescuerSettingsScreen> {
   final user = FirebaseAuth.instance.currentUser!;
   bool _isDark = false;
 
-  Future<void> _changeDisplayName(BuildContext context) async {
+  Future<void> _changeDisplayName() async {
     final controller = TextEditingController(text: user.displayName ?? '');
-    await showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
+
+    final currentContext = context;
+
+    final newName = await showDialog<String>(
+      context: currentContext,
+      builder: (dialogContext) => AlertDialog(
         title: const Text('Change Display Name'),
         content: TextField(
           controller: controller,
@@ -37,23 +38,14 @@ class _RescuerSettingsScreenState extends ConsumerState<RescuerSettingsScreen> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(dialogContext),
             child: const Text('Cancel'),
           ),
           ElevatedButton(
-            onPressed: () async {
+            onPressed: () {
               final newName = controller.text.trim();
               if (newName.isNotEmpty) {
-                await user.updateDisplayName(newName);
-                await FirebaseFirestore.instance
-                    .collection('users')
-                    .doc(user.uid)
-                    .update({'name': newName});
-                setState(() {});
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Name updated successfully')),
-                );
+                Navigator.pop(dialogContext, newName);
               }
             },
             child: const Text('Save'),
@@ -61,10 +53,38 @@ class _RescuerSettingsScreenState extends ConsumerState<RescuerSettingsScreen> {
         ],
       ),
     );
+
+    if (newName != null && mounted) {
+      try {
+        await user.updateDisplayName(newName);
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .update({'name': newName});
+
+        setState(() {});
+
+        if (mounted) {
+          // ignore: use_build_context_synchronously
+          ScaffoldMessenger.of(currentContext).showSnackBar(
+            const SnackBar(content: Text('Name updated successfully')),
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(
+            // ignore: use_build_context_synchronously
+            currentContext,
+          ).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
+        }
+      }
+    }
   }
 
-  Future<void> _resetPassword(BuildContext context) async {
+  Future<void> _resetPassword() async {
     await FirebaseAuth.instance.sendPasswordResetEmail(email: user.email!);
+
+    if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Password reset email sent. Check your inbox.'),
@@ -181,17 +201,17 @@ class _RescuerSettingsScreenState extends ConsumerState<RescuerSettingsScreen> {
                     Text(
                       user.email ?? '',
                       style: TextStyle(
-                        color: Colors.white.withOpacity(0.9),
+                        color: Colors.white.withValues(alpha: 0.9),
                         fontSize: 14,
                       ),
                     ),
                     const SizedBox(height: 20),
                     ElevatedButton.icon(
-                      onPressed: () => _changeDisplayName(context),
+                      onPressed: () => _changeDisplayName,
                       icon: const Icon(Icons.edit),
                       label: const Text('Edit Name'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white.withOpacity(0.2),
+                        backgroundColor: Colors.white.withValues(alpha: 0.2),
                         foregroundColor: Colors.white,
                       ),
                     ),
@@ -225,7 +245,7 @@ class _RescuerSettingsScreenState extends ConsumerState<RescuerSettingsScreen> {
                   'Change Password',
                   style: TextStyle(color: Colors.white),
                 ),
-                onTap: () => _resetPassword(context),
+                onTap: () => _resetPassword,
               ),
               ListTile(
                 leading: const Icon(Icons.picture_as_pdf, color: Colors.white),

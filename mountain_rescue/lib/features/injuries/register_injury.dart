@@ -174,20 +174,21 @@ class _InjuryRegistrationScreenState
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text('Injury Type - $bodyPart'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: _injuryTypeOptions.map((type) {
-            return RadioListTile<String>(
-              title: Text(type),
-              value: type,
-              groupValue: _injuryTypes[bodyPart],
-              activeColor: const Color(0xFF1565C0),
-              onChanged: (value) {
-                setState(() => _injuryTypes[bodyPart] = value!);
-                Navigator.pop(ctx);
-              },
-            );
-          }).toList(),
+        content: RadioGroup<String>(
+          groupValue: _injuryTypes[bodyPart],
+          onChanged: (value) {
+            setState(() {
+              _injuryTypes[bodyPart] = value!;
+            });
+            if (!mounted) return;
+            Navigator.pop(ctx);
+          },
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: _injuryTypeOptions.map((type) {
+              return RadioListTile<String>(value: type, title: Text(type));
+            }).toList(),
+          ),
         ),
       ),
     );
@@ -235,12 +236,15 @@ class _InjuryRegistrationScreenState
       final repo = InjuryRepository();
       final docId = await repo.createInjury(injury.toMap());
 
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Injury report submitted (ID: $docId)')),
       );
 
+      if (!mounted) return;
       Navigator.pop(context);
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Error: $e')));
@@ -328,7 +332,7 @@ class _InjuryRegistrationScreenState
                   ),
                   const SizedBox(height: 16),
                   DropdownButtonFormField<String>(
-                    value: _selectedSkiRun,
+                    initialValue: _selectedSkiRun,
                     decoration: InputDecoration(
                       labelText: 'Ski Slope',
                       prefixIcon: const Icon(Icons.landscape),
@@ -362,10 +366,10 @@ class _InjuryRegistrationScreenState
                       horizontal: 16,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF1565C0).withOpacity(0.1),
+                      color: const Color(0xFF1565C0).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
-                        color: const Color(0xFF1565C0).withOpacity(0.3),
+                        color: const Color(0xFF1565C0).withValues(alpha: 0.3),
                       ),
                     ),
                     child: Row(
@@ -541,7 +545,7 @@ class _InjuryRegistrationScreenState
                     isDark,
                   ),
                 );
-              }).toList(),
+              }),
             ],
           );
         },
@@ -569,11 +573,11 @@ class _InjuryRegistrationScreenState
               decoration: BoxDecoration(
                 color: hasSelection
                     ? Color.lerp(
-                        const Color(0xFFE53935).withOpacity(0.4),
-                        const Color(0xFFE53935).withOpacity(0.7),
+                        const Color(0xFFE53935).withValues(alpha: 0.4),
+                        const Color(0xFFE53935).withValues(alpha: 0.7),
                         _pulseController.value,
                       )
-                    : const Color(0xFF1565C0).withOpacity(0.3),
+                    : const Color(0xFF1565C0).withValues(alpha: 0.3),
                 shape: BoxShape.circle,
                 border: Border.all(
                   color: hasSelection
@@ -584,9 +588,9 @@ class _InjuryRegistrationScreenState
                 boxShadow: hasSelection
                     ? [
                         BoxShadow(
-                          color: const Color(
-                            0xFFE53935,
-                          ).withOpacity(0.3 + (_pulseController.value * 0.4)),
+                          color: const Color(0xFFE53935).withValues(
+                            alpha: 0.3 + (_pulseController.value * 0.4),
+                          ),
                           blurRadius: 10 + (_pulseController.value * 15),
                           spreadRadius: 2 + (_pulseController.value * 3),
                         ),
@@ -634,7 +638,7 @@ class _InjuryRegistrationScreenState
         color: isDark ? const Color(0xFF2A2A2A) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: const Color(0xFF1565C0).withOpacity(0.3),
+          color: const Color(0xFF1565C0).withValues(alpha: 0.3),
           width: 2,
         ),
       ),
@@ -645,7 +649,7 @@ class _InjuryRegistrationScreenState
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF1565C0).withOpacity(0.15),
+                  color: const Color(0xFF1565C0).withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Icon(
@@ -708,7 +712,7 @@ class _InjuryRegistrationScreenState
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: const Color(0xFFE53935).withOpacity(0.3),
+                    color: const Color(0xFFE53935).withValues(alpha: 0.3),
                     blurRadius: 8,
                     spreadRadius: 1,
                   ),
@@ -752,13 +756,13 @@ class _InjuryRegistrationScreenState
         color: isDark ? const Color(0xFF2A2A2A) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: isDark
-            ? Border.all(color: Colors.white.withOpacity(0.1))
+            ? Border.all(color: Colors.white.withValues(alpha: 0.1))
             : null,
         boxShadow: isDark
             ? null
             : [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: Colors.black.withValues(alpha: 0.05),
                   blurRadius: 10,
                   offset: const Offset(0, 2),
                 ),
@@ -807,7 +811,7 @@ class _InjuryRegistrationScreenState
             style: const TextStyle(fontSize: 13),
           ),
           onPressed: () => _showInjuryTypeDialog(part),
-          backgroundColor: const Color(0xFFE53935).withOpacity(0.15),
+          backgroundColor: const Color(0xFFE53935).withValues(alpha: 0.15),
           side: const BorderSide(color: Color(0xFFE53935)),
         );
       }).toList(),

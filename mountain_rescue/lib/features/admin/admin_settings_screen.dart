@@ -1,9 +1,7 @@
-import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -23,7 +21,7 @@ class _AdminSettingsScreenState extends ConsumerState<AdminSettingsScreen> {
   final user = FirebaseAuth.instance.currentUser!;
   bool _isDark = false;
 
-  Future<void> _changeDisplayName(BuildContext context) async {
+  Future<void> _changeDisplayName() async {
     final controller = TextEditingController(text: user.displayName ?? '');
     await showDialog(
       context: context,
@@ -38,24 +36,30 @@ class _AdminSettingsScreenState extends ConsumerState<AdminSettingsScreen> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () {
+              if (!mounted) return;
+              Navigator.pop(context);
+            },
             child: const Text('Cancel'),
           ),
           ElevatedButton(
             onPressed: () async {
               final newName = controller.text.trim();
-              if (newName.isNotEmpty) {
-                await user.updateDisplayName(newName);
-                await FirebaseFirestore.instance
-                    .collection('users')
-                    .doc(user.uid)
-                    .update({'name': newName});
-                setState(() {});
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Name updated successfully')),
-                );
-              }
+              if (newName.isEmpty) return;
+
+              await user.updateDisplayName(newName);
+              await FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(user.uid)
+                  .update({'name': newName});
+
+              if (!mounted) return;
+
+              setState(() {});
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Name updated successfully')),
+              );
             },
             child: const Text('Save'),
           ),
@@ -64,8 +68,9 @@ class _AdminSettingsScreenState extends ConsumerState<AdminSettingsScreen> {
     );
   }
 
-  Future<void> _resetPassword(BuildContext context) async {
+  Future<void> _resetPassword() async {
     await FirebaseAuth.instance.sendPasswordResetEmail(email: user.email!);
+    if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Password reset email sent. Check your inbox.'),
@@ -143,18 +148,21 @@ class _AdminSettingsScreenState extends ConsumerState<AdminSettingsScreen> {
             'Hello,\n\nI need help with the Mountain Rescue admin panel.\n\nBest regards,\n${user.displayName ?? "Admin"}',
       },
     );
+
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri);
     } else {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Could not open email app.')),
       );
     }
   }
 
-  void _logout(BuildContext context, WidgetRef ref) async {
+  void _logout() async {
     await ref.read(authRepositoryProvider).signOut();
-    if (context.mounted) Navigator.pop(context);
+    if (!mounted) return;
+    Navigator.pop(context);
   }
 
   @override
@@ -184,21 +192,19 @@ class _AdminSettingsScreenState extends ConsumerState<AdminSettingsScreen> {
               Center(
                 child: Column(
                   children: [
-                    GestureDetector(
-                      child: CircleAvatar(
-                        radius: 48,
-                        backgroundImage: user.photoURL != null
-                            ? NetworkImage(user.photoURL!)
-                            : null,
-                        backgroundColor: Colors.white,
-                        child: user.photoURL == null
-                            ? const Icon(
-                                Icons.admin_panel_settings,
-                                color: Color(0xFF1565C0),
-                                size: 48,
-                              )
-                            : null,
-                      ),
+                    CircleAvatar(
+                      radius: 48,
+                      backgroundImage: user.photoURL != null
+                          ? NetworkImage(user.photoURL!)
+                          : null,
+                      backgroundColor: Colors.white,
+                      child: user.photoURL == null
+                          ? const Icon(
+                              Icons.admin_panel_settings,
+                              color: Color(0xFF1565C0),
+                              size: 48,
+                            )
+                          : null,
                     ),
                     const SizedBox(height: 12),
                     Text(
@@ -212,17 +218,17 @@ class _AdminSettingsScreenState extends ConsumerState<AdminSettingsScreen> {
                     Text(
                       user.email ?? '',
                       style: TextStyle(
-                        color: Colors.white.withOpacity(0.9),
+                        color: Colors.white.withValues(alpha: 0.9),
                         fontSize: 14,
                       ),
                     ),
                     const SizedBox(height: 20),
                     ElevatedButton.icon(
-                      onPressed: () => _changeDisplayName(context),
+                      onPressed: _changeDisplayName,
                       icon: const Icon(Icons.edit),
                       label: const Text('Edit Name'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white.withOpacity(0.2),
+                        backgroundColor: Colors.white.withValues(alpha: 0.2),
                         foregroundColor: Colors.white,
                       ),
                     ),
@@ -236,7 +242,7 @@ class _AdminSettingsScreenState extends ConsumerState<AdminSettingsScreen> {
                   'Change Password',
                   style: TextStyle(color: Colors.white),
                 ),
-                onTap: () => _resetPassword(context),
+                onTap: _resetPassword,
               ),
               ListTile(
                 leading: const Icon(Icons.picture_as_pdf, color: Colors.white),
@@ -277,7 +283,7 @@ class _AdminSettingsScreenState extends ConsumerState<AdminSettingsScreen> {
                   'Logout',
                   style: TextStyle(color: Colors.redAccent),
                 ),
-                onTap: () => _logout(context, ref),
+                onTap: _logout,
               ),
             ],
           ),
