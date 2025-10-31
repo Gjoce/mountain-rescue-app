@@ -1,0 +1,86 @@
+name: Flutter Android CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+jobs:
+  test-and-analyze:
+    name: Test & Analyze
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.35.6"
+          cache: true
+          cache-key: flutter-packages-${{ hashFiles('**/pubspec.lock') }}
+
+      - name: Show Flutter version
+        run: flutter --version
+
+      - name: Get packages
+        run: |
+          cd mountain_rescue
+          flutter pub get
+
+      - name: Analyze code
+        run: |
+          cd mountain_rescue
+          flutter analyze
+
+      - name: Check formatting
+        run: |
+          cd mountain_rescue
+          dart format --set-exit-if-changed .
+
+  build-android:
+    name: Build Android
+    runs-on: ubuntu-latest
+    needs: test-and-analyze
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.35.6"
+          cache: true
+
+      - name: Get packages
+        run: |
+          cd mountain_rescue
+          flutter pub get
+
+      - name: Build APK
+        run: |
+          cd mountain_rescue
+          flutter build apk --release
+
+      - name: Build App Bundle
+        run: |
+          cd mountain_rescue
+          flutter build appbundle --release
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-apk
+          path: mountain_rescue/build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 7
+
+      - name: Upload App Bundle artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-appbundle
+          path: mountain_rescue/build/app/outputs/bundle/release/app-release.aab
+          retention-days: 7
