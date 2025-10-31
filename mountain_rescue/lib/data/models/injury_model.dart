@@ -34,7 +34,8 @@ class Injury {
 
   final DateTime timestamp;
   final String status;
-  //final String? photoUrl; // To be implemented
+  final String? photoUrl; // To be implemented
+  final String? signatureUrl;
 
   Injury({
     required this.id,
@@ -49,7 +50,8 @@ class Injury {
     required this.description,
     required this.timestamp,
     required this.status,
-    //this.photoUrl, // To be implemented
+    this.photoUrl, // To be implemented
+    this.signatureUrl,
   });
 
   factory Injury.fromMap(Map<String, dynamic> data, String id) {
@@ -72,7 +74,8 @@ class Injury {
       description: data['description'] ?? '',
       timestamp: (data['timestamp'] as Timestamp).toDate(),
       status: data['status'] ?? 'pending',
-      //photoUrl: data['photoUrl'], // To be implemented
+      photoUrl: data['photoUrl'], // To be implemented
+      signatureUrl: data['signatureUrl'],
     );
   }
 
@@ -89,7 +92,8 @@ class Injury {
       'description': description,
       'timestamp': Timestamp.fromDate(timestamp),
       'status': status,
-      //'photoUrl': photoUrl, // To be implemented
+      'photoUrl': photoUrl, // To be implemented
+      'signatureUrl': signatureUrl,
     };
   }
 
