@@ -275,7 +275,7 @@ class _InjuryRegistrationScreenState
       if (_idPhotoBytes != null) {
         try {
           final photoUrl = await repo.uploadIdPhoto(docId, _idPhotoBytes!);
-          await repo.updateInjury(docId, {'photoPath': photoUrl});
+          await repo.updateInjury(docId, {'photoUrl': photoUrl});
         } catch (uploadError) {
           throw Exception('Failed to upload ID photo: $uploadError');
         }
