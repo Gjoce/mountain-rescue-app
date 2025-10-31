@@ -5,8 +5,6 @@ import 'admin_settings_screen.dart';
 import 'admin_injuries_screen.dart';
 import 'add_rescuer_screen.dart';
 import 'manage_rescuers_screen.dart';
-import 'add_rescuer_screen.dart';
-import 'manage_rescuers_screen.dart';
 
 class AdminHomeScreen extends ConsumerWidget {
   const AdminHomeScreen({super.key});
