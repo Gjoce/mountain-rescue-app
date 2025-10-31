@@ -37,7 +37,7 @@ class AdminHomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final user = ref.watch(firebaseAuthStateProvider).value;
+    final userAsync = ref.watch(currentUserProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
@@ -60,326 +60,350 @@ class AdminHomeScreen extends ConsumerWidget {
           ),
         ),
         child: SafeArea(
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Admin Dashboard',
-                              style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.9),
-                                fontSize: 16,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              user?.displayName ?? 'Administrator',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.2),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: const Icon(
-                            Icons.admin_panel_settings,
-                            color: Colors.white,
-                            size: 32,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.3),
-                          width: 1,
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          const Icon(
-                            Icons.shield,
-                            color: Colors.white,
-                            size: 20,
-                          ),
-                          const SizedBox(width: 12),
-                          const Text(
-                            'System Administrator',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          const Spacer(),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.amber,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: const Text(
-                              'ADMIN',
-                              style: TextStyle(
-                                color: Colors.black87,
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+          child: userAsync.when(
+            loading: () => const Center(child: CircularProgressIndicator()),
+            error: (err, _) => Center(
+              child: Text(
+                'Error loading user',
+                style: TextStyle(color: Colors.white),
               ),
+            ),
+            data: (user) {
+              final adminName = user?.name ?? "Administrator";
 
-              Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: isDark ? const Color(0xFF1E1E1E) : Colors.grey[50],
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(30),
-                      topRight: Radius.circular(30),
-                    ),
-                  ),
-                  child: SingleChildScrollView(
+              return Column(
+                children: [
+                  // HEADER SECTION (Admin Dashboard + Profile)
+                  Padding(
                     padding: const EdgeInsets.all(24),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Text(
-                          'Overview',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: isDark ? Colors.white : Colors.grey[800],
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-
-                        GridView.count(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          crossAxisCount: 2,
-                          mainAxisSpacing: 12,
-                          crossAxisSpacing: 12,
-                          childAspectRatio: 1.3,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            _StatCard(
-                              icon: Icons.local_hospital,
-                              title: 'Total Injuries',
-                              value: '127',
-                              color: const Color(0xFFE53935),
-                              isDark: isDark,
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Admin Dashboard',
+                                  style: TextStyle(
+                                    color: Colors.white.withOpacity(0.9),
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  adminName,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
                             ),
-                            _StatCard(
-                              icon: Icons.people,
-                              title: 'Active Rescuers',
-                              value: '24',
-                              color: const Color(0xFF43A047),
-                              isDark: isDark,
-                            ),
-                            _StatCard(
-                              icon: Icons.today,
-                              title: 'This Week',
-                              value: '8',
-                              color: const Color(0xFFFB8C00),
-                              isDark: isDark,
-                            ),
-                            _StatCard(
-                              icon: Icons.trending_up,
-                              title: 'This Month',
-                              value: '32',
-                              color: const Color(0xFF1565C0),
-                              isDark: isDark,
+                            Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const Icon(
+                                Icons.admin_panel_settings,
+                                color: Colors.white,
+                                size: 32,
+                              ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 32),
-
-                        Text(
-                          'Management',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: isDark ? Colors.white : Colors.grey[800],
-                          ),
-                        ),
                         const SizedBox(height: 16),
-
-                        _ActionButton(
-                          icon: Icons.map,
-                          title: 'Injury Map',
-                          subtitle: 'View all incidents on interactive map',
-                          gradient: const LinearGradient(
-                            colors: [Color(0xFF1565C0), Color(0xFF0D47A1)],
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
                           ),
-                          onTap: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Opening injury map...'),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.15),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: Colors.white.withOpacity(0.3),
+                              width: 1,
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.shield,
+                                color: Colors.white,
+                                size: 20,
                               ),
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 12),
-
-                        _ActionButton(
-                          icon: Icons.list_alt,
-                          title: 'View All Injuries',
-                          subtitle: 'Browse and manage injury reports',
-                          gradient: const LinearGradient(
-                            colors: [Color(0xFF5E35B1), Color(0xFF4527A0)],
-                          ),
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => const AdminInjuriesScreen(),
-                              ),
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 12),
-
-                        _ActionButton(
-                          icon: Icons.person_add,
-                          title: 'Add New Rescuer',
-                          subtitle: 'Register new ski patrol member',
-                          gradient: const LinearGradient(
-                            colors: [Color(0xFF43A047), Color(0xFF388E3C)],
-                          ),
-                          onTap: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                  'Opening rescuer registration...',
+                              const SizedBox(width: 12),
+                              const Text(
+                                'System Administrator',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 12),
-
-                        _ActionButton(
-                          icon: Icons.people_outline,
-                          title: 'Manage Rescuers',
-                          subtitle: 'View and edit rescuer profiles',
-                          gradient: const LinearGradient(
-                            colors: [Color(0xFFFB8C00), Color(0xFFF57C00)],
-                          ),
-                          onTap: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Opening rescuer management...'),
+                              const Spacer(),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 4,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.amber,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: const Text(
+                                  'ADMIN',
+                                  style: TextStyle(
+                                    color: Colors.black87,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                               ),
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 32),
-
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _SecondaryActionCard(
-                                icon: Icons.file_download,
-                                title: 'Export Reports',
-                                color: const Color(0xFF00897B),
-                                isDark: isDark,
-                                onTap: () {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('Preparing export...'),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: _SecondaryActionCard(
-                                icon: Icons.settings,
-                                title: 'Settings',
-                                color: const Color(0xFF5E35B1),
-                                isDark: isDark,
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => const AdminSettingsScreen(),
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 24),
-
-                        OutlinedButton.icon(
-                          onPressed: () => _showLogoutDialog(context, ref),
-                          icon: const Icon(Icons.logout),
-                          label: const Text('Log Out'),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: isDark
-                                ? Colors.red[300]
-                                : Colors.red[700],
-                            side: BorderSide(
-                              color: isDark
-                                  ? Colors.red[300]!
-                                  : Colors.red[700]!,
-                              width: 2,
-                            ),
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-
-                        Center(
-                          child: Text(
-                            'Mountain Rescue • Admin Panel',
-                            style: TextStyle(
-                              color: Colors.grey[500],
-                              fontSize: 12,
-                            ),
+                            ],
                           ),
                         ),
                       ],
                     ),
                   ),
-                ),
-              ),
-            ],
+
+                  // MAIN CONTENT
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: isDark
+                            ? const Color(0xFF1E1E1E)
+                            : Colors.grey[50],
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(30),
+                          topRight: Radius.circular(30),
+                        ),
+                      ),
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.all(24),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Text(
+                              'Overview',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: isDark ? Colors.white : Colors.grey[800],
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+
+                            GridView.count(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              crossAxisCount: 2,
+                              mainAxisSpacing: 12,
+                              crossAxisSpacing: 12,
+                              childAspectRatio: 1.3,
+                              children: [
+                                _StatCard(
+                                  icon: Icons.local_hospital,
+                                  title: 'Total Injuries',
+                                  value: '127',
+                                  color: const Color(0xFFE53935),
+                                  isDark: isDark,
+                                ),
+                                _StatCard(
+                                  icon: Icons.people,
+                                  title: 'Active Rescuers',
+                                  value: '24',
+                                  color: const Color(0xFF43A047),
+                                  isDark: isDark,
+                                ),
+                                _StatCard(
+                                  icon: Icons.today,
+                                  title: 'This Week',
+                                  value: '8',
+                                  color: const Color(0xFFFB8C00),
+                                  isDark: isDark,
+                                ),
+                                _StatCard(
+                                  icon: Icons.trending_up,
+                                  title: 'This Month',
+                                  value: '32',
+                                  color: const Color(0xFF1565C0),
+                                  isDark: isDark,
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 32),
+
+                            Text(
+                              'Management',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: isDark ? Colors.white : Colors.grey[800],
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+
+                            _ActionButton(
+                              icon: Icons.map,
+                              title: 'Injury Map',
+                              subtitle: 'View all incidents on interactive map',
+                              gradient: const LinearGradient(
+                                colors: [Color(0xFF1565C0), Color(0xFF0D47A1)],
+                              ),
+                              onTap: () {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Opening injury map...'),
+                                  ),
+                                );
+                              },
+                            ),
+                            const SizedBox(height: 12),
+
+                            _ActionButton(
+                              icon: Icons.list_alt,
+                              title: 'View All Injuries',
+                              subtitle: 'Browse and manage injury reports',
+                              gradient: const LinearGradient(
+                                colors: [Color(0xFF5E35B1), Color(0xFF4527A0)],
+                              ),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const AdminInjuriesScreen(),
+                                  ),
+                                );
+                              },
+                            ),
+                            const SizedBox(height: 12),
+
+                            _ActionButton(
+                              icon: Icons.person_add,
+                              title: 'Add New Rescuer',
+                              subtitle: 'Register new ski patrol member',
+                              gradient: const LinearGradient(
+                                colors: [Color(0xFF43A047), Color(0xFF388E3C)],
+                              ),
+                              onTap: () {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      'Opening rescuer registration...',
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                            const SizedBox(height: 12),
+
+                            _ActionButton(
+                              icon: Icons.people_outline,
+                              title: 'Manage Rescuers',
+                              subtitle: 'View and edit rescuer profiles',
+                              gradient: const LinearGradient(
+                                colors: [Color(0xFFFB8C00), Color(0xFFF57C00)],
+                              ),
+                              onTap: () {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      'Opening rescuer management...',
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                            const SizedBox(height: 32),
+
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: _SecondaryActionCard(
+                                    icon: Icons.file_download,
+                                    title: 'Export Reports',
+                                    color: const Color(0xFF00897B),
+                                    isDark: isDark,
+                                    onTap: () {
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        const SnackBar(
+                                          content: Text('Preparing export...'),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: _SecondaryActionCard(
+                                    icon: Icons.settings,
+                                    title: 'Settings',
+                                    color: const Color(0xFF5E35B1),
+                                    isDark: isDark,
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) =>
+                                              const AdminSettingsScreen(),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 24),
+
+                            OutlinedButton.icon(
+                              onPressed: () => _showLogoutDialog(context, ref),
+                              icon: const Icon(Icons.logout),
+                              label: const Text('Log Out'),
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: isDark
+                                    ? Colors.red[300]
+                                    : Colors.red[700],
+                                side: BorderSide(
+                                  color: isDark
+                                      ? Colors.red[300]!
+                                      : Colors.red[700]!,
+                                  width: 2,
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+
+                            Center(
+                              child: Text(
+                                'Mountain Rescue • Admin Panel',
+                                style: TextStyle(
+                                  color: Colors.grey[500],
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
           ),
         ),
       ),
