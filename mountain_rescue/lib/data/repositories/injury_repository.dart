@@ -1,9 +1,18 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../models/injury_model.dart';
+import 'dart:typed_data';
+// ignore: depend_on_referenced_packages
+import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 
 class InjuryRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final String _collectionName = 'injuries';
+  final String bucketName = 'injury-files';
+  final String apiUrl = "http://10.0.2.2:4000/injuries";
 
   Stream<List<Injury>> getInjuriesByRescuer(String rescuerId) {
     return _firestore
@@ -186,5 +195,41 @@ class InjuryRepository {
     } catch (e) {
       throw Exception('Failed to get statistics: $e');
     }
+  }
+
+  Future<String> uploadIdPhoto(String injuryId, Uint8List fileBytes) async {
+    final user = FirebaseAuth.instance.currentUser;
+    final userId = user?.uid;
+
+    final request = http.MultipartRequest(
+      "POST",
+      Uri.parse("$apiUrl/upload-id-photo"),
+    );
+
+    request.fields["injuryId"] = injuryId;
+    request.fields["userId"] = userId!;
+
+    request.files.add(
+      http.MultipartFile.fromBytes(
+        "file",
+        fileBytes,
+        filename: "id_photo.jpg",
+        contentType: MediaType("image", "jpeg"),
+      ),
+    );
+
+    final response = await request.send();
+    final body = await response.stream.bytesToString();
+
+    if (response.statusCode != 200) {
+      throw Exception("File upload failed -> $body");
+    }
+
+    final Map<String, dynamic> json = jsonDecode(body);
+    final filePath = json['filePath'];
+
+    final bucketName = 'injury-files';
+    final supabaseUrl = 'https://hrghcaaqxkznzpwexuaq.supabase.co';
+    return '$supabaseUrl/storage/v1/object/public/$bucketName/$filePath';
   }
 }
