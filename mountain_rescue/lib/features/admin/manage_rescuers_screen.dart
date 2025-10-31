@@ -26,18 +26,17 @@ class ManageRescuersScreen extends StatelessWidget {
 
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
             return const Center(
-              child: Text(
-                'No rescuers found',
-                style: TextStyle(fontSize: 16),
-              ),
+              child: Text('No rescuers found', style: TextStyle(fontSize: 16)),
             );
           }
 
           // Sort locally by creation date
           final rescuers = snapshot.data!.docs;
           rescuers.sort((a, b) {
-            final aTime = (a['createdAt'] as Timestamp?)?.toDate() ?? DateTime(0);
-            final bTime = (b['createdAt'] as Timestamp?)?.toDate() ?? DateTime(0);
+            final aTime =
+                (a['createdAt'] as Timestamp?)?.toDate() ?? DateTime(0);
+            final bTime =
+                (b['createdAt'] as Timestamp?)?.toDate() ?? DateTime(0);
             return bTime.compareTo(aTime);
           });
 
@@ -49,8 +48,7 @@ class ManageRescuersScreen extends StatelessWidget {
               final docId = rescuers[index].id;
 
               return Card(
-                margin:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                 elevation: 2,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
@@ -94,18 +92,27 @@ class ManageRescuersScreen extends StatelessWidget {
 
                       if (value == 'delete') {
                         await ref.delete();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text('Rescuer removed successfully')),
-                        );
+
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Rescuer removed successfully'),
+                            ),
+                          );
+                        }
                       } else if (value == 'promote') {
                         await ref.update({'role': 'admin'});
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text('Rescuer promoted to Admin')),
-                        );
+
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Rescuer promoted to Admin'),
+                            ),
+                          );
+                        }
                       }
                     },
+
                     itemBuilder: (_) => [
                       const PopupMenuItem(
                         value: 'promote',

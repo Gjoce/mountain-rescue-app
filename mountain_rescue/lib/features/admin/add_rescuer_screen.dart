@@ -37,19 +37,21 @@ class _AddRescuerScreenState extends State<AddRescuerScreen> {
       final password = _generatePassword();
 
       // 1️⃣ Create user in Firebase Authentication
-      final cred = await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(
+      final cred = await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: _emailController.text.trim(),
         password: password,
       );
 
       // 2️⃣ Save user in Firestore
-      await FirebaseFirestore.instance.collection('users').doc(cred.user!.uid).set({
-        'name': _nameController.text.trim(),
-        'email': _emailController.text.trim(),
-        'role': 'rescuer',
-        'createdAt': FieldValue.serverTimestamp(),
-      });
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(cred.user!.uid)
+          .set({
+            'name': _nameController.text.trim(),
+            'email': _emailController.text.trim(),
+            'role': 'rescuer',
+            'createdAt': FieldValue.serverTimestamp(),
+          });
 
       setState(() => _generatedPassword = password);
 
@@ -66,13 +68,13 @@ class _AddRescuerScreenState extends State<AddRescuerScreen> {
       } else if (e.code == 'weak-password') {
         message = 'Generated password is too weak.';
       }
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message)));
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Unexpected error: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Unexpected error: $e')));
     } finally {
       setState(() => _isLoading = false);
     }
@@ -80,7 +82,6 @@ class _AddRescuerScreenState extends State<AddRescuerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Add New Rescuer'),
@@ -101,7 +102,7 @@ class _AddRescuerScreenState extends State<AddRescuerScreen> {
                   border: OutlineInputBorder(),
                 ),
                 validator: (v) =>
-                v == null || v.isEmpty ? 'Enter rescuer name' : null,
+                    v == null || v.isEmpty ? 'Enter rescuer name' : null,
               ),
               const SizedBox(height: 16),
               TextFormField(
@@ -126,13 +127,13 @@ class _AddRescuerScreenState extends State<AddRescuerScreen> {
                   onPressed: _isLoading ? null : _addRescuer,
                   icon: _isLoading
                       ? const SizedBox(
-                    width: 22,
-                    height: 22,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Colors.white,
-                    ),
-                  )
+                          width: 22,
+                          height: 22,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
                       : const Icon(Icons.person_add),
                   label: Text(
                     _isLoading ? 'Creating...' : 'Add Rescuer',
