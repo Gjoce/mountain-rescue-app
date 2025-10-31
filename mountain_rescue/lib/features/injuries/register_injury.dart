@@ -393,26 +393,35 @@ class _InjuryRegistrationScreenState
                   const SizedBox(height: 10),
 
                   // R and L Labels positioned above the body diagram
-                  SizedBox(
-                    height: 60,
-                    child: Stack(
-                      children: [
-                        Positioned(
-                          left: 20,
-                          top: 0,
-                          bottom: 0,
-                          child: Center(child: _buildSideLabel('R', isDark)),
+                  if (_selectedRegion == null)
+                    AnimatedOpacity(
+                      duration: const Duration(milliseconds: 300),
+                      opacity: _selectedRegion == null ? 1.0 : 0.0,
+                      child: SizedBox(
+                        height: 60,
+                        child: Stack(
+                          children: [
+                            Positioned(
+                              left: 20,
+                              top: 0,
+                              bottom: 0,
+                              child: Center(
+                                child: _buildSideLabel('R', isDark),
+                              ),
+                            ),
+                            Positioned(
+                              right: 20,
+                              top: 0,
+                              bottom: 0,
+                              child: Center(
+                                child: _buildSideLabel('L', isDark),
+                              ),
+                            ),
+                          ],
                         ),
-                        Positioned(
-                          right: 20,
-                          top: 0,
-                          bottom: 0,
-                          child: Center(child: _buildSideLabel('L', isDark)),
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 10),
+                  if (_selectedRegion == null) const SizedBox(height: 10),
 
                   if (_selectedRegion != null) ...[
                     ElevatedButton.icon(
