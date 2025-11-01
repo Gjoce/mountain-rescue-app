@@ -217,22 +217,41 @@ class _InjuryRegistrationScreenState
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
+        backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text('Injury Type - $bodyPart'),
-        content: RadioGroup<String>(
-          groupValue: _injuryTypes[bodyPart],
-          onChanged: (value) {
-            setState(() {
-              _injuryTypes[bodyPart] = value!;
-            });
-            if (!mounted) return;
-            Navigator.pop(ctx);
-          },
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: _injuryTypeOptions.map((type) {
-              return RadioListTile<String>(value: type, title: Text(type));
-            }).toList(),
+        title: Text(
+          'Injury Type - $bodyPart',
+          style: const TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: Theme(
+          data: Theme.of(context).copyWith(
+            radioTheme: RadioThemeData(
+              fillColor: WidgetStateProperty.all(const Color(0xFF1565C0)),
+            ),
+          ),
+          child: RadioGroup<String>(
+            groupValue: _injuryTypes[bodyPart],
+            onChanged: (value) {
+              setState(() {
+                _injuryTypes[bodyPart] = value!;
+              });
+              Navigator.pop(ctx);
+            },
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: _injuryTypeOptions.map((type) {
+                return RadioListTile<String>(
+                  value: type,
+                  title: Text(
+                    type,
+                    style: const TextStyle(color: Colors.black),
+                  ),
+                );
+              }).toList(),
+            ),
           ),
         ),
       ),
@@ -349,14 +368,28 @@ class _InjuryRegistrationScreenState
                     controller: _nameController,
                     decoration: InputDecoration(
                       labelText: 'Full Name',
+                      floatingLabelStyle: const TextStyle(
+                        color: Color(0xFF1565C0),
+                      ),
                       prefixIcon: const Icon(Icons.badge),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                          color: isDark ? Color(0xFF2A2A2A) : Colors.grey,
+                        ),
+                      ),
+                      focusedBorder: const OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(12)),
+                        borderSide: BorderSide(
+                          color: Color(0xFF1565C0),
+                          width: 2,
+                        ),
+                      ),
                       filled: true,
-                      fillColor: isDark
-                          ? const Color(0xFF2A2A2A)
-                          : Colors.white,
+                      fillColor: isDark ? Color(0xFF2A2A2A) : Colors.white,
                     ),
                     validator: (v) => v?.isEmpty ?? true ? 'Required' : null,
                   ),
@@ -371,10 +404,21 @@ class _InjuryRegistrationScreenState
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(
+                            color: isDark ? Colors.grey : Colors.grey,
+                          ),
+                        ),
+                        focusedBorder: const OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(12)),
+                          borderSide: BorderSide(
+                            color: Color(0xFF1565C0),
+                            width: 2,
+                          ),
+                        ),
                         filled: true,
-                        fillColor: isDark
-                            ? const Color(0xFF2A2A2A)
-                            : Colors.white,
+                        fillColor: isDark ? Color(0xFF2A2A2A) : Colors.white,
                       ),
                       child: Text(
                         _birthDate == null
@@ -383,25 +427,51 @@ class _InjuryRegistrationScreenState
                       ),
                     ),
                   ),
+
                   const SizedBox(height: 16),
-                  DropdownButtonFormField<String>(
-                    initialValue: _selectedSkiRun,
-                    decoration: InputDecoration(
-                      labelText: 'Ski Slope',
-                      prefixIcon: const Icon(Icons.landscape),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      filled: true,
-                      fillColor: isDark
+
+                  Theme(
+                    data: Theme.of(context).copyWith(
+                      canvasColor: isDark
                           ? const Color(0xFF2A2A2A)
                           : Colors.white,
+                      colorScheme: Theme.of(context).colorScheme.copyWith(
+                        primary: const Color(0xFF1565C0),
+                        onSurface: isDark ? Colors.white : Colors.black,
+                      ),
                     ),
-                    items: _skiRuns.map((run) {
-                      return DropdownMenuItem(value: run, child: Text(run));
-                    }).toList(),
-                    onChanged: (v) => setState(() => _selectedSkiRun = v),
-                    validator: (v) => v == null ? 'Required' : null,
+                    child: DropdownButtonFormField<String>(
+                      initialValue: _selectedSkiRun,
+                      decoration: InputDecoration(
+                        labelText: 'Ski Slope',
+                        prefixIcon: const Icon(Icons.landscape),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        filled: true,
+                        fillColor: isDark
+                            ? const Color(0xFF2A2A2A)
+                            : Colors.white,
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(
+                            color: isDark ? Colors.grey : Colors.grey.shade400,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(
+                            color: Color(0xFF1565C0),
+                            width: 2,
+                          ),
+                        ),
+                      ),
+                      items: _skiRuns.map((run) {
+                        return DropdownMenuItem(value: run, child: Text(run));
+                      }).toList(),
+                      onChanged: (v) => setState(() => _selectedSkiRun = v),
+                      validator: (v) => v == null ? 'Required' : null,
+                    ),
                   ),
                 ],
               ),
@@ -529,28 +599,46 @@ class _InjuryRegistrationScreenState
                 title: 'Injury Severity',
                 icon: Icons.warning_amber,
                 children: [
-                  DropdownButtonFormField<String>(
-                    initialValue: _selectedSeverity,
-                    decoration: InputDecoration(
-                      labelText: 'Severity',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      filled: true,
-                      fillColor: isDark
+                  Theme(
+                    data: Theme.of(context).copyWith(
+                      canvasColor: isDark
                           ? const Color(0xFF2A2A2A)
                           : Colors.white,
-                    ),
-                    items: _severityOptions
-                        .map(
-                          (sev) => DropdownMenuItem(
-                            value: sev,
-                            child: Text(sev.toUpperCase()),
+                      dropdownMenuTheme: DropdownMenuThemeData(
+                        inputDecorationTheme: InputDecorationTheme(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                        )
-                        .toList(),
-                    onChanged: (v) => setState(() => _selectedSeverity = v),
-                    validator: (v) => v == null ? 'Required' : null,
+                        ),
+                      ),
+                      colorScheme: Theme.of(context).colorScheme.copyWith(
+                        primary: const Color(0xFF1565C0),
+                        onSurface: isDark ? Colors.white : Colors.black,
+                      ),
+                    ),
+                    child: DropdownButtonFormField<String>(
+                      initialValue: _selectedSeverity,
+                      decoration: InputDecoration(
+                        labelText: 'Severity',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        filled: true,
+                        fillColor: isDark
+                            ? const Color(0xFF2A2A2A)
+                            : Colors.white,
+                      ),
+                      items: _severityOptions
+                          .map(
+                            (sev) => DropdownMenuItem(
+                              value: sev,
+                              child: Text(sev.toUpperCase()),
+                            ),
+                          )
+                          .toList(),
+                      onChanged: (v) => setState(() => _selectedSeverity = v),
+                      validator: (v) => v == null ? 'Required' : null,
+                    ),
                   ),
                 ],
               ),
