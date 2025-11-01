@@ -31,6 +31,15 @@ class _InjuryRegistrationScreenState
   late AnimationController _pulseController;
   bool _isSubmitting = false;
 
+  String? _selectedSeverity;
+
+  final List<String> _severityOptions = [
+    'minor',
+    'moderate',
+    'severe',
+    'critical',
+  ];
+
   final List<String> _skiRuns = [
     'Slope 1',
     'Slope 2',
@@ -230,19 +239,18 @@ class _InjuryRegistrationScreenState
     );
   }
 
-  String _determineSeverity(int injuryCount) {
-    if (injuryCount >= 5) return 'critical';
-    if (injuryCount >= 3) return 'severe';
-    if (injuryCount >= 2) return 'moderate';
-    return 'minor';
-  }
-
   Future<void> _submitInjuryReport() async {
     if (!_formKey.currentState!.validate()) return;
     if (_selectedBodyParts.isEmpty || _birthDate == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please complete all required fields')),
       );
+      return;
+    }
+    if (_selectedSeverity == null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Please select severity')));
       return;
     }
 
@@ -262,7 +270,7 @@ class _InjuryRegistrationScreenState
         injuries: _injuryTypes.entries
             .map((e) => InjuryDetail(bodyPart: e.key, injuryType: e.value))
             .toList(),
-        severity: _determineSeverity(_injuryTypes.length),
+        severity: _selectedSeverity!,
         skiSlope: _selectedSkiRun!,
         description: _commentController.text.trim(),
         timestamp: DateTime.now(),
@@ -512,6 +520,38 @@ class _InjuryRegistrationScreenState
                     const SizedBox(height: 12),
                     _buildSelectedPartsChips(isDark),
                   ],
+                ],
+              ),
+              const SizedBox(height: 24),
+
+              _buildSectionCard(
+                isDark: isDark,
+                title: 'Injury Severity',
+                icon: Icons.warning_amber,
+                children: [
+                  DropdownButtonFormField<String>(
+                    initialValue: _selectedSeverity,
+                    decoration: InputDecoration(
+                      labelText: 'Severity',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      filled: true,
+                      fillColor: isDark
+                          ? const Color(0xFF2A2A2A)
+                          : Colors.white,
+                    ),
+                    items: _severityOptions
+                        .map(
+                          (sev) => DropdownMenuItem(
+                            value: sev,
+                            child: Text(sev.toUpperCase()),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (v) => setState(() => _selectedSeverity = v),
+                    validator: (v) => v == null ? 'Required' : null,
+                  ),
                 ],
               ),
               const SizedBox(height: 24),
