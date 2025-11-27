@@ -180,6 +180,12 @@ The system uses the **Dart `pdf`** package to generate detailed and print-ready 
 
 ---
 
+## Use Case Diagram
+
+<img width="763" height="501" alt="mountain_rescue_usecase drawio" src="https://github.com/user-attachments/assets/f628e4c6-85f7-4931-b392-2d97ddff72de" />
+
+---
+
 # Authors
 
 **Andrej Delimanchev**
