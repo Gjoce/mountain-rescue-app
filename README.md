@@ -182,7 +182,7 @@ The system uses the **Dart `pdf`** package to generate detailed and print-ready 
 
 ## Use Case Diagram
 
-<img width="763" height="501" alt="mountain_rescue_usecase drawio" src="https://github.com/user-attachments/assets/ccc2f574-5073-4feb-b269-86dfc185ab33" />
+<img width="1442" height="961" alt="DPU drawio" src="https://github.com/user-attachments/assets/2799cedb-fab1-4bfb-a47f-00ab433d807f" />
 
 ---
 
