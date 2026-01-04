@@ -3,11 +3,7 @@ class UserModel {
   final String email;
   final String name;
   final String role;
-
-  // NEW: rescuer availability (active/inactive)
   final bool isActive;
-
-  // NEW: profile picture url (optional)
   final String? photoUrl;
 
   UserModel({
