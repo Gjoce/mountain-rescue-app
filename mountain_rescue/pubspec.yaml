@@ -31,6 +31,9 @@ dependencies:
   flutter:
     sdk: flutter
 
+  http: ^1.2.2
+
+
   # Firebase & State Management
   firebase_core: ^4.2.0
   firebase_auth: ^6.1.1

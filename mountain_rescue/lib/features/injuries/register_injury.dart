@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -136,17 +134,6 @@ class _InjuryRegistrationScreenState
   ];
 
   static const String _pohorjeMapAsset = 'assets/maps/pohorje_slopes.jpg';
-
-  static Color _diffColor(SlopeDifficulty d) {
-    switch (d) {
-      case SlopeDifficulty.easy:
-        return const Color(0xFF1DA1F2);
-      case SlopeDifficulty.intermediate:
-        return const Color(0xFFE53935);
-      case SlopeDifficulty.hard:
-        return const Color(0xFF000000);
-    }
-  }
 
   final List<SkiSlope> _slopes = const [
     SkiSlope(id: 1, label: '1', name: 'Turistična proga', difficulty: SlopeDifficulty.easy),

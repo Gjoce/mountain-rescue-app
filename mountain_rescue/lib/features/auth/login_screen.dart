@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../state/providers/auth_provider.dart';
@@ -23,31 +24,38 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final repo = ref.read(authRepositoryProvider);
 
     try {
-      final userCredential = await repo.loginUser(
+      await repo.loginUser(
         _emailController.text.trim(),
         _passwordController.text.trim(),
       );
 
-      if (userCredential == null && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Login failed. Check your credentials.'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
-        );
-      }
-    }
+    } on FirebaseAuthException catch (e) {
+      if (!mounted) return;
 
-    if (mounted) {
-      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            e.code == 'wrong-password' || e.code == 'user-not-found'
+                ? 'Invalid email or password.'
+                : 'Login failed: ${e.message}',
+          ),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Unexpected error: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
   }
+
 
   @override
   void dispose() {

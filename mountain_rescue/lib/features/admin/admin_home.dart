@@ -233,7 +233,7 @@ class AdminHomeScreen extends ConsumerWidget {
                           ),
                         ],
                       );
-                    }).toList(),
+                    }),
                   ],
                 ),
               pw.SizedBox(height: 14),
