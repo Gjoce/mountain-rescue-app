@@ -586,7 +586,6 @@ class _AdminInjuriesScreenState extends State<AdminInjuriesScreen> {
     final rescuerName = _safeString(data['rescuerName'], 'Unknown rescuer');
     final time = _safeTimestamp(data['timestamp']);
 
-    // Try to build a short summary like your model does (fallback to injuryType/description)
     String summary = '';
     if (data['injuries'] is List && (data['injuries'] as List).isNotEmpty) {
       final first = (data['injuries'] as List).first;
@@ -595,8 +594,9 @@ class _AdminInjuriesScreenState extends State<AdminInjuriesScreen> {
       }
     }
     if (summary.isEmpty) summary = _safeString(data['injuryType'], '');
-    if (summary.isEmpty)
+    if (summary.isEmpty) {
       summary = _safeString(data['description'], 'No details');
+    }
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
