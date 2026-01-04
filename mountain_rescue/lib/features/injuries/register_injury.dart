@@ -136,38 +136,163 @@ class _InjuryRegistrationScreenState
   static const String _pohorjeMapAsset = 'assets/maps/pohorje_slopes.jpg';
 
   final List<SkiSlope> _slopes = const [
-    SkiSlope(id: 1, label: '1', name: 'Turistična proga', difficulty: SlopeDifficulty.easy),
-    SkiSlope(id: 2, label: '2', name: 'Andrejeva proga', difficulty: SlopeDifficulty.easy),
-    SkiSlope(id: 3, label: '3', name: 'Bellevue', difficulty: SlopeDifficulty.easy),
-    SkiSlope(id: 4, label: '4', name: 'Mariborski slalom', difficulty: SlopeDifficulty.intermediate),
+    SkiSlope(
+      id: 1,
+      label: '1',
+      name: 'Turistična proga',
+      difficulty: SlopeDifficulty.easy,
+    ),
+    SkiSlope(
+      id: 2,
+      label: '2',
+      name: 'Andrejeva proga',
+      difficulty: SlopeDifficulty.easy,
+    ),
+    SkiSlope(
+      id: 3,
+      label: '3',
+      name: 'Bellevue',
+      difficulty: SlopeDifficulty.easy,
+    ),
+    SkiSlope(
+      id: 4,
+      label: '4',
+      name: 'Mariborski slalom',
+      difficulty: SlopeDifficulty.intermediate,
+    ),
 
-    SkiSlope(id: 5, label: '5a', name: 'Miranova proga A', difficulty: SlopeDifficulty.intermediate),
-    SkiSlope(id: 6, label: '5b', name: 'Miranova proga B', difficulty: SlopeDifficulty.intermediate),
+    SkiSlope(
+      id: 5,
+      label: '5a',
+      name: 'Miranova proga A',
+      difficulty: SlopeDifficulty.intermediate,
+    ),
+    SkiSlope(
+      id: 6,
+      label: '5b',
+      name: 'Miranova proga B',
+      difficulty: SlopeDifficulty.intermediate,
+    ),
 
-    SkiSlope(id: 7, label: '6', name: 'Gradisova proga', difficulty: SlopeDifficulty.intermediate),
-    SkiSlope(id: 8, label: '7', name: 'FIS slalom', difficulty: SlopeDifficulty.hard),
-    SkiSlope(id: 9, label: '8', name: 'Jonatan', difficulty: SlopeDifficulty.hard),
-    SkiSlope(id: 10, label: '9', name: 'Repova proga', difficulty: SlopeDifficulty.easy),
-    SkiSlope(id: 11, label: '10', name: 'Ravna proga', difficulty: SlopeDifficulty.easy),
+    SkiSlope(
+      id: 7,
+      label: '6',
+      name: 'Gradisova proga',
+      difficulty: SlopeDifficulty.intermediate,
+    ),
+    SkiSlope(
+      id: 8,
+      label: '7',
+      name: 'FIS slalom',
+      difficulty: SlopeDifficulty.hard,
+    ),
+    SkiSlope(
+      id: 9,
+      label: '8',
+      name: 'Jonatan',
+      difficulty: SlopeDifficulty.hard,
+    ),
+    SkiSlope(
+      id: 10,
+      label: '9',
+      name: 'Repova proga',
+      difficulty: SlopeDifficulty.easy,
+    ),
+    SkiSlope(
+      id: 11,
+      label: '10',
+      name: 'Ravna proga',
+      difficulty: SlopeDifficulty.easy,
+    ),
 
-    SkiSlope(id: 12, label: '11', name: 'Markova proga', difficulty: SlopeDifficulty.hard),
+    SkiSlope(
+      id: 12,
+      label: '11',
+      name: 'Markova proga',
+      difficulty: SlopeDifficulty.hard,
+    ),
 
-    SkiSlope(id: 13, label: '12', name: 'Marinova proga', difficulty: SlopeDifficulty.intermediate),
-    SkiSlope(id: 14, label: '13', name: 'Glažarska pot', difficulty: SlopeDifficulty.easy),
-    SkiSlope(id: 15, label: '14', name: 'Areška pot', difficulty: SlopeDifficulty.easy),
-    SkiSlope(id: 16, label: '15', name: 'Cvirnova proga', difficulty: SlopeDifficulty.easy),
-    SkiSlope(id: 17, label: '16', name: 'Ruški smuk', difficulty: SlopeDifficulty.intermediate),
+    SkiSlope(
+      id: 13,
+      label: '12',
+      name: 'Marinova proga',
+      difficulty: SlopeDifficulty.intermediate,
+    ),
+    SkiSlope(
+      id: 14,
+      label: '13',
+      name: 'Glažarska pot',
+      difficulty: SlopeDifficulty.easy,
+    ),
+    SkiSlope(
+      id: 15,
+      label: '14',
+      name: 'Areška pot',
+      difficulty: SlopeDifficulty.easy,
+    ),
+    SkiSlope(
+      id: 16,
+      label: '15',
+      name: 'Cvirnova proga',
+      difficulty: SlopeDifficulty.easy,
+    ),
+    SkiSlope(
+      id: 17,
+      label: '16',
+      name: 'Ruški smuk',
+      difficulty: SlopeDifficulty.intermediate,
+    ),
 
-    SkiSlope(id: 18, label: '17', name: 'Šolska proga', difficulty: SlopeDifficulty.easy),
+    SkiSlope(
+      id: 18,
+      label: '17',
+      name: 'Šolska proga',
+      difficulty: SlopeDifficulty.easy,
+    ),
 
-    SkiSlope(id: 19, label: '18', name: 'Partizanovo', difficulty: SlopeDifficulty.intermediate),
-    SkiSlope(id: 20, label: '19', name: 'Mali X 1', difficulty: SlopeDifficulty.easy),
-    SkiSlope(id: 21, label: '20', name: 'Mali X 2', difficulty: SlopeDifficulty.easy),
-    SkiSlope(id: 22, label: '21', name: 'Povezava Žigart', difficulty: SlopeDifficulty.easy),
+    SkiSlope(
+      id: 19,
+      label: '18',
+      name: 'Partizanovo',
+      difficulty: SlopeDifficulty.intermediate,
+    ),
+    SkiSlope(
+      id: 20,
+      label: '19',
+      name: 'Mali X 1',
+      difficulty: SlopeDifficulty.easy,
+    ),
+    SkiSlope(
+      id: 21,
+      label: '20',
+      name: 'Mali X 2',
+      difficulty: SlopeDifficulty.easy,
+    ),
+    SkiSlope(
+      id: 22,
+      label: '21',
+      name: 'Povezava Žigart',
+      difficulty: SlopeDifficulty.easy,
+    ),
 
-    SkiSlope(id: 23, label: '22', name: 'Žigart', difficulty: SlopeDifficulty.easy),
-    SkiSlope(id: 24, label: '23', name: 'Pisker', difficulty: SlopeDifficulty.intermediate),
-    SkiSlope(id: 25, label: '24', name: 'Cojzerica', difficulty: SlopeDifficulty.intermediate),
+    SkiSlope(
+      id: 23,
+      label: '22',
+      name: 'Žigart',
+      difficulty: SlopeDifficulty.easy,
+    ),
+    SkiSlope(
+      id: 24,
+      label: '23',
+      name: 'Pisker',
+      difficulty: SlopeDifficulty.intermediate,
+    ),
+    SkiSlope(
+      id: 25,
+      label: '24',
+      name: 'Cojzerica',
+      difficulty: SlopeDifficulty.intermediate,
+    ),
   ];
 
   Future<void> _pickIdPhoto() async {
@@ -287,7 +412,10 @@ class _InjuryRegistrationScreenState
               children: _injuryTypeOptions.map((type) {
                 return RadioListTile<String>(
                   value: type,
-                  title: Text(type, style: const TextStyle(color: Colors.black)),
+                  title: Text(
+                    type,
+                    style: const TextStyle(color: Colors.black),
+                  ),
                 );
               }).toList(),
             ),
@@ -329,9 +457,9 @@ class _InjuryRegistrationScreenState
       return;
     }
     if (_selectedSeverity == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select severity')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Please select severity')));
       return;
     }
     if (_selectedSlopeId == null || _selectedSlopeName == null) {
@@ -382,9 +510,9 @@ class _InjuryRegistrationScreenState
       Navigator.pop(context);
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error: $e')));
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
     }
@@ -432,8 +560,9 @@ class _InjuryRegistrationScreenState
                     controller: _nameController,
                     decoration: InputDecoration(
                       labelText: 'Full Name',
-                      floatingLabelStyle:
-                      const TextStyle(color: Color(0xFF1565C0)),
+                      floatingLabelStyle: const TextStyle(
+                        color: Color(0xFF1565C0),
+                      ),
                       prefixIcon: const Icon(Icons.badge),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -452,10 +581,12 @@ class _InjuryRegistrationScreenState
                         ),
                       ),
                       filled: true,
-                      fillColor: isDark ? const Color(0xFF2A2A2A) : Colors.white,
+                      fillColor: isDark
+                          ? const Color(0xFF2A2A2A)
+                          : Colors.white,
                     ),
                     validator: (v) =>
-                    (v == null || v.isEmpty) ? 'Required' : null,
+                        (v == null || v.isEmpty) ? 'Required' : null,
                   ),
                   const SizedBox(height: 16),
                   InkWell(
@@ -482,8 +613,9 @@ class _InjuryRegistrationScreenState
                           ),
                         ),
                         filled: true,
-                        fillColor:
-                        isDark ? const Color(0xFF2A2A2A) : Colors.white,
+                        fillColor: isDark
+                            ? const Color(0xFF2A2A2A)
+                            : Colors.white,
                       ),
                       child: Text(
                         _birthDate == null
@@ -515,7 +647,9 @@ class _InjuryRegistrationScreenState
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                               borderSide: BorderSide(
-                                color: isDark ? Colors.grey : Colors.grey.shade400,
+                                color: isDark
+                                    ? Colors.grey
+                                    : Colors.grey.shade400,
                               ),
                             ),
                             focusedBorder: OutlineInputBorder(
@@ -535,11 +669,11 @@ class _InjuryRegistrationScreenState
                                   style: TextStyle(
                                     color: _selectedSlopeName == null
                                         ? (isDark
-                                        ? Colors.white70
-                                        : Colors.black54)
+                                              ? Colors.white70
+                                              : Colors.black54)
                                         : (isDark
-                                        ? Colors.white
-                                        : Colors.black87),
+                                              ? Colors.white
+                                              : Colors.black87),
                                   ),
                                 ),
                               ),
@@ -615,13 +749,17 @@ class _InjuryRegistrationScreenState
                               left: 20,
                               top: 0,
                               bottom: 0,
-                              child: Center(child: _buildSideLabel('R', isDark)),
+                              child: Center(
+                                child: _buildSideLabel('R', isDark),
+                              ),
                             ),
                             Positioned(
                               right: 20,
                               top: 0,
                               bottom: 0,
-                              child: Center(child: _buildSideLabel('L', isDark)),
+                              child: Center(
+                                child: _buildSideLabel('L', isDark),
+                              ),
                             ),
                           ],
                         ),
@@ -685,8 +823,9 @@ class _InjuryRegistrationScreenState
                 children: [
                   Theme(
                     data: Theme.of(context).copyWith(
-                      canvasColor:
-                      isDark ? const Color(0xFF2A2A2A) : Colors.white,
+                      canvasColor: isDark
+                          ? const Color(0xFF2A2A2A)
+                          : Colors.white,
                       colorScheme: Theme.of(context).colorScheme.copyWith(
                         primary: const Color(0xFF1565C0),
                         onSurface: isDark ? Colors.white : Colors.black,
@@ -700,16 +839,17 @@ class _InjuryRegistrationScreenState
                           borderRadius: BorderRadius.circular(12),
                         ),
                         filled: true,
-                        fillColor:
-                        isDark ? const Color(0xFF2A2A2A) : Colors.white,
+                        fillColor: isDark
+                            ? const Color(0xFF2A2A2A)
+                            : Colors.white,
                       ),
                       items: _severityOptions
                           .map(
                             (sev) => DropdownMenuItem(
-                          value: sev,
-                          child: Text(sev.toUpperCase()),
-                        ),
-                      )
+                              value: sev,
+                              child: Text(sev.toUpperCase()),
+                            ),
+                          )
                           .toList(),
                       onChanged: (v) => setState(() => _selectedSeverity = v),
                       validator: (v) => v == null ? 'Required' : null,
@@ -734,17 +874,21 @@ class _InjuryRegistrationScreenState
                         borderRadius: BorderRadius.circular(12),
                       ),
                       filled: true,
-                      fillColor:
-                      isDark ? const Color(0xFF2A2A2A) : Colors.white,
+                      fillColor: isDark
+                          ? const Color(0xFF2A2A2A)
+                          : Colors.white,
                     ),
                     validator: (v) =>
-                    (v == null || v.isEmpty) ? 'Required' : null,
+                        (v == null || v.isEmpty) ? 'Required' : null,
                   ),
                 ],
               ),
 
               const SizedBox(height: 12),
-              const Text('ID Photo', style: TextStyle(fontWeight: FontWeight.bold)),
+              const Text(
+                'ID Photo',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
               const SizedBox(height: 8),
 
               GestureDetector(
@@ -758,25 +902,30 @@ class _InjuryRegistrationScreenState
                   ),
                   child: _idPhotoBytes != null
                       ? Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Icon(Icons.check_circle,
-                          color: Colors.green, size: 32),
-                      SizedBox(width: 8),
-                      Text('Image added',
-                          style: TextStyle(fontWeight: FontWeight.bold)),
-                    ],
-                  )
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const [
+                            Icon(
+                              Icons.check_circle,
+                              color: Colors.green,
+                              size: 32,
+                            ),
+                            SizedBox(width: 8),
+                            Text(
+                              'Image added',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        )
                       : const Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.camera_alt, size: 40),
-                        SizedBox(height: 8),
-                        Text('Tap to choose camera or gallery'),
-                      ],
-                    ),
-                  ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.camera_alt, size: 40),
+                              SizedBox(height: 8),
+                              Text('Tap to choose camera or gallery'),
+                            ],
+                          ),
+                        ),
                 ),
               ),
 
@@ -788,14 +937,15 @@ class _InjuryRegistrationScreenState
                   onPressed: _isSubmitting ? null : _submitInjuryReport,
                   icon: _isSubmitting
                       ? const SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor:
-                      AlwaysStoppedAnimation<Color>(Colors.white),
-                    ),
-                  )
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Colors.white,
+                            ),
+                          ),
+                        )
                       : const Icon(Icons.send, size: 24),
                   label: Text(
                     _isSubmitting ? 'Submitting...' : 'Submit Report',
@@ -848,7 +998,7 @@ class _InjuryRegistrationScreenState
               ),
               ..._bodyRegions.entries.map((entry) {
                 final hasSelection = entry.value.subParts.any(
-                      (part) => _selectedBodyParts.contains(part),
+                  (part) => _selectedBodyParts.contains(part),
                 );
 
                 return Positioned(
@@ -913,11 +1063,11 @@ class _InjuryRegistrationScreenState
   }
 
   Widget _buildRegionButton(
-      String name,
-      BodyRegion region,
-      bool hasSelection,
-      bool isDark,
-      ) {
+    String name,
+    BodyRegion region,
+    bool hasSelection,
+    bool isDark,
+  ) {
     return GestureDetector(
       onTap: () => _selectRegion(name),
       child: AnimatedScale(
@@ -932,10 +1082,10 @@ class _InjuryRegistrationScreenState
               decoration: BoxDecoration(
                 color: hasSelection
                     ? Color.lerp(
-                  const Color(0xFFE53935).withValues(alpha: 0.4),
-                  const Color(0xFFE53935).withValues(alpha: 0.7),
-                  _pulseController.value,
-                )
+                        const Color(0xFFE53935).withValues(alpha: 0.4),
+                        const Color(0xFFE53935).withValues(alpha: 0.7),
+                        _pulseController.value,
+                      )
                     : const Color(0xFF1565C0).withValues(alpha: 0.3),
                 shape: BoxShape.circle,
                 border: Border.all(
@@ -946,14 +1096,14 @@ class _InjuryRegistrationScreenState
                 ),
                 boxShadow: hasSelection
                     ? [
-                  BoxShadow(
-                    color: const Color(0xFFE53935).withValues(
-                      alpha: 0.3 + (_pulseController.value * 0.4),
-                    ),
-                    blurRadius: 10 + (_pulseController.value * 15),
-                    spreadRadius: 2 + (_pulseController.value * 3),
-                  ),
-                ]
+                        BoxShadow(
+                          color: const Color(0xFFE53935).withValues(
+                            alpha: 0.3 + (_pulseController.value * 0.4),
+                          ),
+                          blurRadius: 10 + (_pulseController.value * 15),
+                          spreadRadius: 2 + (_pulseController.value * 3),
+                        ),
+                      ]
                     : null,
               ),
               child: Column(
@@ -961,7 +1111,9 @@ class _InjuryRegistrationScreenState
                 children: [
                   Icon(
                     hasSelection ? Icons.check_circle : Icons.touch_app,
-                    color: hasSelection ? Colors.white : const Color(0xFF1565C0),
+                    color: hasSelection
+                        ? Colors.white
+                        : const Color(0xFF1565C0),
                     size: 24,
                   ),
                   const SizedBox(height: 2),
@@ -970,8 +1122,9 @@ class _InjuryRegistrationScreenState
                     style: TextStyle(
                       fontSize: 9,
                       fontWeight: FontWeight.bold,
-                      color:
-                      hasSelection ? Colors.white : const Color(0xFF1565C0),
+                      color: hasSelection
+                          ? Colors.white
+                          : const Color(0xFF1565C0),
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -1067,12 +1220,12 @@ class _InjuryRegistrationScreenState
           ),
           boxShadow: isSelected
               ? [
-            BoxShadow(
-              color: const Color(0xFFE53935).withValues(alpha: 0.3),
-              blurRadius: 8,
-              spreadRadius: 1,
-            ),
-          ]
+                  BoxShadow(
+                    color: const Color(0xFFE53935).withValues(alpha: 0.3),
+                    blurRadius: 8,
+                    spreadRadius: 1,
+                  ),
+                ]
               : null,
         ),
         child: Row(
@@ -1111,17 +1264,18 @@ class _InjuryRegistrationScreenState
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF2A2A2A) : Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border:
-        isDark ? Border.all(color: Colors.white.withValues(alpha: 0.1)) : null,
+        border: isDark
+            ? Border.all(color: Colors.white.withValues(alpha: 0.1))
+            : null,
         boxShadow: isDark
             ? null
             : [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 2),
+                ),
+              ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1275,10 +1429,7 @@ class _SlopePickerSheet extends StatelessWidget {
                           child: InteractiveViewer(
                             minScale: 1.0,
                             maxScale: 6.0,
-                            child: Image.asset(
-                              mapAsset,
-                              fit: BoxFit.contain,
-                            ),
+                            child: Image.asset(mapAsset, fit: BoxFit.contain),
                           ),
                         ),
                       ),
@@ -1308,13 +1459,18 @@ class _SlopePickerSheet extends StatelessWidget {
                           final c = _diffColor(s.difficulty);
 
                           return Material(
-                            color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+                            color: isDark
+                                ? const Color(0xFF1E1E1E)
+                                : Colors.white,
                             borderRadius: BorderRadius.circular(12),
                             child: InkWell(
                               onTap: () => Navigator.pop(context, s),
                               borderRadius: BorderRadius.circular(12),
                               child: Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 10,
+                                ),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(12),
                                   border: Border.all(
@@ -1340,7 +1496,9 @@ class _SlopePickerSheet extends StatelessWidget {
                                         s.label,
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
-                                          color: isDark ? Colors.white : const Color(0xFF1565C0),
+                                          color: isDark
+                                              ? Colors.white
+                                              : const Color(0xFF1565C0),
                                         ),
                                       ),
                                     ),
@@ -1348,7 +1506,9 @@ class _SlopePickerSheet extends StatelessWidget {
                                       child: Text(
                                         s.name,
                                         style: TextStyle(
-                                          color: isDark ? Colors.white : Colors.black87,
+                                          color: isDark
+                                              ? Colors.white
+                                              : Colors.black87,
                                           fontWeight: FontWeight.w600,
                                         ),
                                         overflow: TextOverflow.ellipsis,
@@ -1401,7 +1561,9 @@ class _Legend extends StatelessWidget {
         color: isDark ? const Color(0xFF2A2A2A) : Colors.grey.shade50,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06),
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.08)
+              : Colors.black.withValues(alpha: 0.06),
         ),
       ),
       child: Row(

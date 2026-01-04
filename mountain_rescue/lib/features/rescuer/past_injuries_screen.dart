@@ -159,28 +159,28 @@ class _PastInjuriesScreenState extends ConsumerState<PastInjuriesScreen> {
                             ),
                             child: filteredList.isEmpty
                                 ? Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: _buildEmptyState(isDark),
-                            )
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: _buildEmptyState(isDark),
+                                  )
                                 : RefreshIndicator(
-                              color: const Color(0xFF1565C0),
-                              onRefresh: () async {
-                                ref.invalidate(
-                                  rescuerInjuriesProvider(user.uid),
-                                );
-                              },
-                              child: ListView.builder(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 16,
-                                ),
-                                itemCount: filteredList.length,
-                                itemBuilder: (context, index) {
-                                  final injury = filteredList[index];
-                                  return _buildInjuryCard(injury, isDark);
-                                },
-                              ),
-                            ),
+                                    color: const Color(0xFF1565C0),
+                                    onRefresh: () async {
+                                      ref.invalidate(
+                                        rescuerInjuriesProvider(user.uid),
+                                      );
+                                    },
+                                    child: ListView.builder(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 16,
+                                        vertical: 16,
+                                      ),
+                                      itemCount: filteredList.length,
+                                      itemBuilder: (context, index) {
+                                        final injury = filteredList[index];
+                                        return _buildInjuryCard(injury, isDark);
+                                      },
+                                    ),
+                                  ),
                           ),
                         ),
                       ),
@@ -350,7 +350,11 @@ class _PastInjuriesScreenState extends ConsumerState<PastInjuriesScreen> {
                   value: 'all',
                   child: Row(
                     children: [
-                      Icon(Icons.all_inclusive, size: 18, color: Color(0xFF1565C0)),
+                      Icon(
+                        Icons.all_inclusive,
+                        size: 18,
+                        color: Color(0xFF1565C0),
+                      ),
                       SizedBox(width: 8),
                       Text('All Status'),
                     ],
@@ -360,7 +364,11 @@ class _PastInjuriesScreenState extends ConsumerState<PastInjuriesScreen> {
                   value: 'pending',
                   child: Row(
                     children: [
-                      Icon(Icons.pending_actions, size: 18, color: Color(0xFFFFA726)),
+                      Icon(
+                        Icons.pending_actions,
+                        size: 18,
+                        color: Color(0xFFFFA726),
+                      ),
                       SizedBox(width: 8),
                       Text('Pending'),
                     ],
@@ -370,7 +378,11 @@ class _PastInjuriesScreenState extends ConsumerState<PastInjuriesScreen> {
                   value: 'approved',
                   child: Row(
                     children: [
-                      Icon(Icons.check_circle_outline, size: 18, color: Color(0xFF42A5F5)),
+                      Icon(
+                        Icons.check_circle_outline,
+                        size: 18,
+                        color: Color(0xFF42A5F5),
+                      ),
                       SizedBox(width: 8),
                       Text('Approved'),
                     ],
@@ -380,7 +392,11 @@ class _PastInjuriesScreenState extends ConsumerState<PastInjuriesScreen> {
                   value: 'denied',
                   child: Row(
                     children: [
-                      Icon(Icons.cancel, size: 18, color: Color.fromARGB(255, 255, 0, 0)),
+                      Icon(
+                        Icons.cancel,
+                        size: 18,
+                        color: Color.fromARGB(255, 255, 0, 0),
+                      ),
                       SizedBox(width: 8),
                       Text('Denied'),
                     ],
@@ -401,7 +417,11 @@ class _PastInjuriesScreenState extends ConsumerState<PastInjuriesScreen> {
                   value: 'all',
                   child: Row(
                     children: [
-                      Icon(Icons.all_inclusive, size: 18, color: Color(0xFF1565C0)),
+                      Icon(
+                        Icons.all_inclusive,
+                        size: 18,
+                        color: Color(0xFF1565C0),
+                      ),
                       SizedBox(width: 8),
                       Text('All Severity'),
                     ],
@@ -441,7 +461,11 @@ class _PastInjuriesScreenState extends ConsumerState<PastInjuriesScreen> {
                   value: 'minor',
                   child: Row(
                     children: [
-                      Icon(Icons.health_and_safety, size: 18, color: Color(0xFF66BB6A)),
+                      Icon(
+                        Icons.health_and_safety,
+                        size: 18,
+                        color: Color(0xFF66BB6A),
+                      ),
                       SizedBox(width: 8),
                       Text('Minor'),
                     ],
@@ -535,7 +559,9 @@ class _PastInjuriesScreenState extends ConsumerState<PastInjuriesScreen> {
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF2A2A2A) : Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: isDark ? Border.all(color: Colors.white.withValues(alpha: 0.1)) : null,
+        border: isDark
+            ? Border.all(color: Colors.white.withValues(alpha: 0.1))
+            : null,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.15),
@@ -564,9 +590,14 @@ class _PastInjuriesScreenState extends ConsumerState<PastInjuriesScreen> {
                 Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
-                        color: _severityColor(injury.severity).withValues(alpha: 0.2),
+                        color: _severityColor(
+                          injury.severity,
+                        ).withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
                           color: _severityColor(injury.severity),
@@ -595,9 +626,14 @@ class _PastInjuriesScreenState extends ConsumerState<PastInjuriesScreen> {
                     ),
                     const SizedBox(width: 8),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
-                        color: _statusColor(injury.status).withValues(alpha: 0.2),
+                        color: _statusColor(
+                          injury.status,
+                        ).withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
@@ -674,7 +710,9 @@ class _PastInjuriesScreenState extends ConsumerState<PastInjuriesScreen> {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      DateFormat('dd MMM yyyy • HH:mm').format(injury.timestamp),
+                      DateFormat(
+                        'dd MMM yyyy • HH:mm',
+                      ).format(injury.timestamp),
                       style: TextStyle(
                         fontSize: 14,
                         color: isDark ? Colors.grey[400] : Colors.grey[700],
@@ -690,29 +728,41 @@ class _PastInjuriesScreenState extends ConsumerState<PastInjuriesScreen> {
                     spacing: 6,
                     runSpacing: 6,
                     children: [
-                      ...injury.affectedBodyParts.take(3).map(
+                      ...injury.affectedBodyParts
+                          .take(3)
+                          .map(
                             (part) => Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF1565C0).withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color: const Color(0xFF1565C0).withValues(alpha: 0.35),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: const Color(
+                                  0xFF1565C0,
+                                ).withValues(alpha: 0.15),
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: const Color(
+                                    0xFF1565C0,
+                                  ).withValues(alpha: 0.35),
+                                ),
+                              ),
+                              child: Text(
+                                part,
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  color: Color(0xFF1565C0),
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
                             ),
                           ),
-                          child: Text(
-                            part,
-                            style: const TextStyle(
-                              fontSize: 11,
-                              color: Color(0xFF1565C0),
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ),
                       if (injury.injuryCount > 3)
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.grey.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(12),

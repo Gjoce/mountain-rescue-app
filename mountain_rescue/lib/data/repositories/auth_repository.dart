@@ -5,11 +5,9 @@ class AuthRepository {
   final FirebaseAuth _auth;
   final FirebaseFirestore _firestore;
 
-  AuthRepository({
-    FirebaseAuth? auth,
-    FirebaseFirestore? firestore,
-  })  : _auth = auth ?? FirebaseAuth.instance,
-        _firestore = firestore ?? FirebaseFirestore.instance;
+  AuthRepository({FirebaseAuth? auth, FirebaseFirestore? firestore})
+    : _auth = auth ?? FirebaseAuth.instance,
+      _firestore = firestore ?? FirebaseFirestore.instance;
 
   // Used by your dialogs/buttons
   Future<void> signOut() => _auth.signOut();
@@ -25,11 +23,11 @@ class AuthRepository {
   // FIX: method expected by your Register screen
   // Creates FirebaseAuth user + creates Firestore "users/{uid}" doc
   Future<UserCredential> registerUser(
-      String name,
-      String email,
-      String password, {
-        String role = 'rescuer',
-      }) async {
+    String name,
+    String email,
+    String password, {
+    String role = 'rescuer',
+  }) async {
     final cred = await _auth.createUserWithEmailAndPassword(
       email: email.trim(),
       password: password.trim(),

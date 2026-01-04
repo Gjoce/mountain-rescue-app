@@ -67,8 +67,10 @@ class _InjuryDetailScreenState extends ConsumerState<InjuryDetailScreen> {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid == null) return false;
 
-    final snap =
-    await FirebaseFirestore.instance.collection('users').doc(uid).get();
+    final snap = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .get();
     final data = snap.data();
     return (data?['role']?.toString() == 'admin');
   }
@@ -77,11 +79,14 @@ class _InjuryDetailScreenState extends ConsumerState<InjuryDetailScreen> {
     setState(() => _savingStatus = true);
     try {
       final uid = FirebaseAuth.instance.currentUser?.uid;
-      await FirebaseFirestore.instance.collection('injuries').doc(injuryId).update({
-        'status': newStatus,
-        'statusUpdatedAt': FieldValue.serverTimestamp(),
-        'statusUpdatedBy': uid,
-      });
+      await FirebaseFirestore.instance
+          .collection('injuries')
+          .doc(injuryId)
+          .update({
+            'status': newStatus,
+            'statusUpdatedAt': FieldValue.serverTimestamp(),
+            'statusUpdatedBy': uid,
+          });
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -89,9 +94,9 @@ class _InjuryDetailScreenState extends ConsumerState<InjuryDetailScreen> {
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to update status: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to update status: $e')));
     } finally {
       if (mounted) setState(() => _savingStatus = false);
     }
@@ -116,7 +121,9 @@ class _InjuryDetailScreenState extends ConsumerState<InjuryDetailScreen> {
                 padding: const pw.EdgeInsets.all(16),
                 decoration: pw.BoxDecoration(
                   color: PdfColors.blue800,
-                  borderRadius: const pw.BorderRadius.all(pw.Radius.circular(8)),
+                  borderRadius: const pw.BorderRadius.all(
+                    pw.Radius.circular(8),
+                  ),
                 ),
                 child: pw.Row(
                   mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
@@ -197,7 +204,7 @@ class _InjuryDetailScreenState extends ConsumerState<InjuryDetailScreen> {
               pw.Divider(thickness: 2, color: PdfColors.blue800),
               pw.SizedBox(height: 8),
               ...injury.injuries.map(
-                    (inj) => pw.Padding(
+                (inj) => pw.Padding(
                   padding: const pw.EdgeInsets.only(bottom: 4),
                   child: pw.Row(
                     children: [
@@ -351,7 +358,7 @@ class _InjuryDetailScreenState extends ConsumerState<InjuryDetailScreen> {
 
         final injury = snapshot.data!;
         final currentStatus =
-        (injury.status.isEmpty ? 'pending' : injury.status).toLowerCase();
+            (injury.status.isEmpty ? 'pending' : injury.status).toLowerCase();
 
         return Scaffold(
           backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.grey[50],
@@ -540,8 +547,9 @@ class _InjuryDetailScreenState extends ConsumerState<InjuryDetailScreen> {
                           _buildInfoRow(
                             Icons.cake,
                             'Date of Birth',
-                            DateFormat('dd MMM yyyy')
-                                .format(injury.patientBirthDate),
+                            DateFormat(
+                              'dd MMM yyyy',
+                            ).format(injury.patientBirthDate),
                             isDark,
                           ),
                           const SizedBox(height: 12),
@@ -574,8 +582,9 @@ class _InjuryDetailScreenState extends ConsumerState<InjuryDetailScreen> {
                           _buildInfoRow(
                             Icons.access_time,
                             'Date & Time',
-                            DateFormat('dd MMM yyyy – HH:mm')
-                                .format(injury.timestamp),
+                            DateFormat(
+                              'dd MMM yyyy – HH:mm',
+                            ).format(injury.timestamp),
                             isDark,
                           ),
                         ],
@@ -600,12 +609,14 @@ class _InjuryDetailScreenState extends ConsumerState<InjuryDetailScreen> {
                               child: Container(
                                 padding: const EdgeInsets.all(12),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFE53935)
-                                      .withValues(alpha: 0.1),
+                                  color: const Color(
+                                    0xFFE53935,
+                                  ).withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(12),
                                   border: Border.all(
-                                    color: const Color(0xFFE53935)
-                                        .withValues(alpha: 0.3),
+                                    color: const Color(
+                                      0xFFE53935,
+                                    ).withValues(alpha: 0.3),
                                   ),
                                 ),
                                 child: Row(
@@ -613,8 +624,9 @@ class _InjuryDetailScreenState extends ConsumerState<InjuryDetailScreen> {
                                     Container(
                                       padding: const EdgeInsets.all(8),
                                       decoration: BoxDecoration(
-                                        color: const Color(0xFFE53935)
-                                            .withValues(alpha: 0.15),
+                                        color: const Color(
+                                          0xFFE53935,
+                                        ).withValues(alpha: 0.15),
                                         shape: BoxShape.circle,
                                       ),
                                       child: const Icon(
@@ -627,7 +639,7 @@ class _InjuryDetailScreenState extends ConsumerState<InjuryDetailScreen> {
                                     Expanded(
                                       child: Column(
                                         crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Text(
                                             inj.bodyPart,
@@ -741,17 +753,18 @@ class _InjuryDetailScreenState extends ConsumerState<InjuryDetailScreen> {
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF2A2A2A) : Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border:
-        isDark ? Border.all(color: Colors.white.withValues(alpha: 0.1)) : null,
+        border: isDark
+            ? Border.all(color: Colors.white.withValues(alpha: 0.1))
+            : null,
         boxShadow: isDark
             ? null
             : [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 2),
+                ),
+              ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -883,9 +896,9 @@ class _StatusEditorState extends State<_StatusEditor> {
               onChanged: widget.saving
                   ? null
                   : (v) {
-                if (v == null) return;
-                setState(() => _selected = v);
-              },
+                      if (v == null) return;
+                      setState(() => _selected = v);
+                    },
             ),
           ),
         ),
@@ -904,13 +917,13 @@ class _StatusEditorState extends State<_StatusEditor> {
             ),
             child: widget.saving
                 ? const SizedBox(
-              width: 22,
-              height: 22,
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                color: Colors.white,
-              ),
-            )
+                    width: 22,
+                    height: 22,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
+                  )
                 : Text('Save Status: ${_selected.toUpperCase()}'),
           ),
         ),

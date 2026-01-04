@@ -49,10 +49,9 @@ class _RescuerSettingsScreenState extends ConsumerState<RescuerSettingsScreen> {
 
       await user.updatePhotoURL(url);
 
-      await _firestore.collection('users').doc(user.uid).set(
-        {'photoUrl': url},
-        SetOptions(merge: true),
-      );
+      await _firestore.collection('users').doc(user.uid).set({
+        'photoUrl': url,
+      }, SetOptions(merge: true));
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -93,10 +92,9 @@ class _RescuerSettingsScreenState extends ConsumerState<RescuerSettingsScreen> {
               if (newName.isEmpty) return;
 
               await user.updateDisplayName(newName);
-              await _firestore.collection('users').doc(user.uid).set(
-                {'name': newName},
-                SetOptions(merge: true),
-              );
+              await _firestore.collection('users').doc(user.uid).set({
+                'name': newName,
+              }, SetOptions(merge: true));
 
               if (!mounted) return;
               Navigator.pop(context);
@@ -133,10 +131,9 @@ class _RescuerSettingsScreenState extends ConsumerState<RescuerSettingsScreen> {
     setState(() => _updatingStatus = true);
 
     try {
-      await _firestore.collection('users').doc(user.uid).set(
-        {'isActive': isActive},
-        SetOptions(merge: true),
-      );
+      await _firestore.collection('users').doc(user.uid).set({
+        'isActive': isActive,
+      }, SetOptions(merge: true));
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -146,9 +143,9 @@ class _RescuerSettingsScreenState extends ConsumerState<RescuerSettingsScreen> {
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to update status: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to update status: $e')));
     } finally {
       if (mounted) setState(() => _updatingStatus = false);
     }
@@ -224,14 +221,15 @@ class _RescuerSettingsScreenState extends ConsumerState<RescuerSettingsScreen> {
                             CircleAvatar(
                               radius: 52,
                               backgroundColor: Colors.white,
-                              backgroundImage:
-                              photoUrl != null ? NetworkImage(photoUrl) : null,
+                              backgroundImage: photoUrl != null
+                                  ? NetworkImage(photoUrl)
+                                  : null,
                               child: photoUrl == null
                                   ? const Icon(
-                                Icons.person,
-                                color: Color(0xFF1565C0),
-                                size: 54,
-                              )
+                                      Icons.person,
+                                      color: Color(0xFF1565C0),
+                                      size: 54,
+                                    )
                                   : null,
                             ),
                             Material(
@@ -246,17 +244,17 @@ class _RescuerSettingsScreenState extends ConsumerState<RescuerSettingsScreen> {
                                   padding: const EdgeInsets.all(8),
                                   child: _uploadingPhoto
                                       ? const SizedBox(
-                                    width: 18,
-                                    height: 18,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                    ),
-                                  )
+                                          width: 18,
+                                          height: 18,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                          ),
+                                        )
                                       : const Icon(
-                                    Icons.camera_alt,
-                                    size: 18,
-                                    color: Color(0xFF1565C0),
-                                  ),
+                                          Icons.camera_alt,
+                                          size: 18,
+                                          color: Color(0xFF1565C0),
+                                        ),
                                 ),
                               ),
                             ),
@@ -303,7 +301,9 @@ class _RescuerSettingsScreenState extends ConsumerState<RescuerSettingsScreen> {
                           icon: const Icon(Icons.edit),
                           label: const Text('Edit Name'),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white.withValues(alpha: 0.2),
+                            backgroundColor: Colors.white.withValues(
+                              alpha: 0.2,
+                            ),
                             foregroundColor: Colors.white,
                           ),
                         ),
@@ -326,21 +326,24 @@ class _RescuerSettingsScreenState extends ConsumerState<RescuerSettingsScreen> {
                     ),
                     trailing: _updatingStatus
                         ? const SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
                         : Switch(
-                      value: isActive,
-                      onChanged: (val) => _updateRescuerActiveStatus(
-                        user: user,
-                        isActive: val,
-                      ),
-                    ),
+                            value: isActive,
+                            onChanged: (val) => _updateRescuerActiveStatus(
+                              user: user,
+                              isActive: val,
+                            ),
+                          ),
                   ),
 
                   ListTile(
-                    leading: const Icon(Icons.image_outlined, color: Colors.white),
+                    leading: const Icon(
+                      Icons.image_outlined,
+                      color: Colors.white,
+                    ),
                     title: const Text(
                       'Change Profile Picture',
                       style: TextStyle(color: Colors.white),
@@ -351,7 +354,10 @@ class _RescuerSettingsScreenState extends ConsumerState<RescuerSettingsScreen> {
                   ),
 
                   ListTile(
-                    leading: const Icon(Icons.lock_outline, color: Colors.white),
+                    leading: const Icon(
+                      Icons.lock_outline,
+                      color: Colors.white,
+                    ),
                     title: const Text(
                       'Change Password',
                       style: TextStyle(color: Colors.white),
@@ -360,7 +366,10 @@ class _RescuerSettingsScreenState extends ConsumerState<RescuerSettingsScreen> {
                   ),
 
                   ListTile(
-                    leading: const Icon(Icons.info_outline, color: Colors.white),
+                    leading: const Icon(
+                      Icons.info_outline,
+                      color: Colors.white,
+                    ),
                     title: const Text(
                       'About App',
                       style: TextStyle(color: Colors.white),
@@ -371,7 +380,7 @@ class _RescuerSettingsScreenState extends ConsumerState<RescuerSettingsScreen> {
                         applicationName: 'Mountain Rescue – Rescuer App',
                         applicationVersion: '1.2.0',
                         applicationLegalese:
-                        '© 2025 Mountain Rescue Team. All rights reserved.',
+                            '© 2025 Mountain Rescue Team. All rights reserved.',
                       );
                     },
                   ),

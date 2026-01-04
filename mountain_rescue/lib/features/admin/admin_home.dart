@@ -76,18 +76,18 @@ class AdminHomeScreen extends ConsumerWidget {
     final weekInjuriesFuture = fs
         .collection('injuries')
         .where(
-      'timestamp',
-      isGreaterThanOrEqualTo: Timestamp.fromDate(weekStart),
-    )
+          'timestamp',
+          isGreaterThanOrEqualTo: Timestamp.fromDate(weekStart),
+        )
         .count()
         .get();
 
     final monthInjuriesFuture = fs
         .collection('injuries')
         .where(
-      'timestamp',
-      isGreaterThanOrEqualTo: Timestamp.fromDate(monthStart),
-    )
+          'timestamp',
+          isGreaterThanOrEqualTo: Timestamp.fromDate(monthStart),
+        )
         .count()
         .get();
 
@@ -125,8 +125,9 @@ class AdminHomeScreen extends ConsumerWidget {
     final status = (data['status'] ?? 'N/A').toString();
     final description = (data['description'] ?? '').toString();
 
-    final injuries =
-    (data['injuries'] is List) ? (data['injuries'] as List) : const [];
+    final injuries = (data['injuries'] is List)
+        ? (data['injuries'] as List)
+        : const [];
 
     pdf.addPage(
       pw.Page(
@@ -201,18 +202,14 @@ class AdminHomeScreen extends ConsumerWidget {
                           padding: const pw.EdgeInsets.all(6),
                           child: pw.Text(
                             'Body Part',
-                            style: pw.TextStyle(
-                              fontWeight: pw.FontWeight.bold,
-                            ),
+                            style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
                           ),
                         ),
                         pw.Padding(
                           padding: const pw.EdgeInsets.all(6),
                           child: pw.Text(
                             'Injury Type',
-                            style: pw.TextStyle(
-                              fontWeight: pw.FontWeight.bold,
-                            ),
+                            style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
                           ),
                         ),
                       ],
@@ -332,10 +329,9 @@ class AdminHomeScreen extends ConsumerWidget {
 
       if (context.mounted) Navigator.pop(context);
 
-      await Share.shareXFiles(
-        [zipFile],
-        text: 'Mountain Rescue reports export ($dateStamp)',
-      );
+      await Share.shareXFiles([
+        zipFile,
+      ], text: 'Mountain Rescue reports export ($dateStamp)');
 
       messenger.showSnackBar(
         const SnackBar(
@@ -361,15 +357,15 @@ class AdminHomeScreen extends ConsumerWidget {
             end: Alignment.bottomRight,
             colors: isDark
                 ? [
-              const Color(0xFF1A237E),
-              const Color(0xFF0D47A1),
-              const Color(0xFF01579B),
-            ]
+                    const Color(0xFF1A237E),
+                    const Color(0xFF0D47A1),
+                    const Color(0xFF01579B),
+                  ]
                 : [
-              const Color(0xFF1565C0),
-              const Color(0xFF1976D2),
-              const Color(0xFF42A5F5),
-            ],
+                    const Color(0xFF1565C0),
+                    const Color(0xFF1976D2),
+                    const Color(0xFF42A5F5),
+                  ],
           ),
         ),
         child: SafeArea(
@@ -486,8 +482,9 @@ class AdminHomeScreen extends ConsumerWidget {
                   Expanded(
                     child: Container(
                       decoration: BoxDecoration(
-                        color:
-                        isDark ? const Color(0xFF1E1E1E) : Colors.grey[50],
+                        color: isDark
+                            ? const Color(0xFF1E1E1E)
+                            : Colors.grey[50],
                         borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(30),
                           topRight: Radius.circular(30),
@@ -512,8 +509,7 @@ class AdminHomeScreen extends ConsumerWidget {
                               builder: (context, snap) {
                                 final counts = snap.data;
 
-                                final total =
-                                    counts?['totalInjuries'] ?? '—';
+                                final total = counts?['totalInjuries'] ?? '—';
                                 final rescuers =
                                     counts?['activeRescuers'] ?? '—';
                                 final week = counts?['thisWeek'] ?? '—';
@@ -521,8 +517,7 @@ class AdminHomeScreen extends ConsumerWidget {
 
                                 return GridView.count(
                                   shrinkWrap: true,
-                                  physics:
-                                  const NeverScrollableScrollPhysics(),
+                                  physics: const NeverScrollableScrollPhysics(),
                                   crossAxisCount: 2,
                                   mainAxisSpacing: 12,
                                   crossAxisSpacing: 12,
@@ -573,20 +568,18 @@ class AdminHomeScreen extends ConsumerWidget {
                             _ActionButton(
                               icon: Icons.map,
                               title: 'Injury Map',
-                              subtitle:
-                              'View all incidents on interactive map',
+                              subtitle: 'View all incidents on interactive map',
                               gradient: const LinearGradient(
-                                colors: [
-                                  Color(0xFF1565C0),
-                                  Color(0xFF0D47A1),
-                                ],
+                                colors: [Color(0xFF1565C0), Color(0xFF0D47A1)],
                               ),
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (_) => const SlopesMapScreen()),
-                                  );
-                                },
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const SlopesMapScreen(),
+                                  ),
+                                );
+                              },
                             ),
                             const SizedBox(height: 12),
                             _ActionButton(
@@ -594,17 +587,13 @@ class AdminHomeScreen extends ConsumerWidget {
                               title: 'View All Injuries',
                               subtitle: 'Browse and manage injury reports',
                               gradient: const LinearGradient(
-                                colors: [
-                                  Color(0xFF5E35B1),
-                                  Color(0xFF4527A0),
-                                ],
+                                colors: [Color(0xFF5E35B1), Color(0xFF4527A0)],
                               ),
                               onTap: () {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (_) =>
-                                    const AdminInjuriesScreen(),
+                                    builder: (_) => const AdminInjuriesScreen(),
                                   ),
                                 );
                               },
@@ -615,17 +604,13 @@ class AdminHomeScreen extends ConsumerWidget {
                               title: 'Add New Rescuer',
                               subtitle: 'Register new ski patrol member',
                               gradient: const LinearGradient(
-                                colors: [
-                                  Color(0xFF43A047),
-                                  Color(0xFF388E3C),
-                                ],
+                                colors: [Color(0xFF43A047), Color(0xFF388E3C)],
                               ),
                               onTap: () {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (_) =>
-                                    const AddRescuerScreen(),
+                                    builder: (_) => const AddRescuerScreen(),
                                   ),
                                 );
                               },
@@ -636,17 +621,14 @@ class AdminHomeScreen extends ConsumerWidget {
                               title: 'Manage Rescuers',
                               subtitle: 'View and edit rescuer profiles',
                               gradient: const LinearGradient(
-                                colors: [
-                                  Color(0xFFFB8C00),
-                                  Color(0xFFF57C00),
-                                ],
+                                colors: [Color(0xFFFB8C00), Color(0xFFF57C00)],
                               ),
                               onTap: () {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (_) =>
-                                    const ManageRescuersScreen(),
+                                        const ManageRescuersScreen(),
                                   ),
                                 );
                               },
@@ -676,7 +658,7 @@ class AdminHomeScreen extends ConsumerWidget {
                                         context,
                                         MaterialPageRoute(
                                           builder: (_) =>
-                                          const AdminSettingsScreen(),
+                                              const AdminSettingsScreen(),
                                         ),
                                       );
                                     },
@@ -686,8 +668,7 @@ class AdminHomeScreen extends ConsumerWidget {
                             ),
                             const SizedBox(height: 24),
                             OutlinedButton.icon(
-                              onPressed: () =>
-                                  _showLogoutDialog(context, ref),
+                              onPressed: () => _showLogoutDialog(context, ref),
                               icon: const Icon(Icons.logout),
                               label: const Text('Log Out'),
                               style: OutlinedButton.styleFrom(
@@ -761,12 +742,12 @@ class _StatCard extends StatelessWidget {
         boxShadow: isDark
             ? null
             : [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 2),
+                ),
+              ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

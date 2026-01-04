@@ -70,9 +70,9 @@ class _AdminInjuriesScreenState extends State<AdminInjuriesScreen> {
   }
 
   int _countWhere(
-      List<QueryDocumentSnapshot<Map<String, dynamic>>> docs,
-      bool Function(Map<String, dynamic> d) predicate,
-      ) {
+    List<QueryDocumentSnapshot<Map<String, dynamic>>> docs,
+    bool Function(Map<String, dynamic> d) predicate,
+  ) {
     var c = 0;
     for (final doc in docs) {
       if (predicate(doc.data())) c++;
@@ -102,8 +102,9 @@ class _AdminInjuriesScreenState extends State<AdminInjuriesScreen> {
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Scaffold(
-                  backgroundColor:
-                  isDark ? const Color(0xFF1E1E1E) : Colors.grey[50],
+                  backgroundColor: isDark
+                      ? const Color(0xFF1E1E1E)
+                      : Colors.grey[50],
                   body: const Center(
                     child: CircularProgressIndicator(
                       valueColor: AlwaysStoppedAnimation<Color>(
@@ -122,7 +123,9 @@ class _AdminInjuriesScreenState extends State<AdminInjuriesScreen> {
               final total = docs.length;
               final approved = _countWhere(
                 docs,
-                    (d) => _safeString(d['status'], 'pending').toLowerCase() == 'approved',
+                (d) =>
+                    _safeString(d['status'], 'pending').toLowerCase() ==
+                    'approved',
               );
 
               // apply filters
@@ -130,17 +133,27 @@ class _AdminInjuriesScreenState extends State<AdminInjuriesScreen> {
 
               if (_selectedStatus != 'all') {
                 filtered = filtered
-                    .where((doc) =>
-                _safeString(doc.data()['status'], 'pending').toLowerCase() ==
-                    _selectedStatus)
+                    .where(
+                      (doc) =>
+                          _safeString(
+                            doc.data()['status'],
+                            'pending',
+                          ).toLowerCase() ==
+                          _selectedStatus,
+                    )
                     .toList();
               }
 
               if (_selectedSeverity != 'all') {
                 filtered = filtered
-                    .where((doc) =>
-                _safeString(doc.data()['severity'], '').toLowerCase() ==
-                    _selectedSeverity)
+                    .where(
+                      (doc) =>
+                          _safeString(
+                            doc.data()['severity'],
+                            '',
+                          ).toLowerCase() ==
+                          _selectedSeverity,
+                    )
                     .toList();
               }
 
@@ -164,8 +177,7 @@ class _AdminInjuriesScreenState extends State<AdminInjuriesScreen> {
                   Expanded(
                     child: Container(
                       decoration: BoxDecoration(
-                        color:
-                        isDark ? const Color(0xFF1E1E1E) : Colors.white,
+                        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
                         borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(30),
                           topRight: Radius.circular(30),
@@ -178,31 +190,31 @@ class _AdminInjuriesScreenState extends State<AdminInjuriesScreen> {
                         ),
                         child: filtered.isEmpty
                             ? Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: _buildEmptyState(isDark),
-                        )
+                                padding: const EdgeInsets.all(16.0),
+                                child: _buildEmptyState(isDark),
+                              )
                             : RefreshIndicator(
-                          color: const Color(0xFF1565C0),
-                          onRefresh: () async {
-                            setState(() {}); // stream refreshes itself
-                          },
-                          child: ListView.builder(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 16,
-                            ),
-                            itemCount: filtered.length,
-                            itemBuilder: (context, index) {
-                              final doc = filtered[index];
-                              final data = doc.data();
-                              return _buildInjuryCard(
-                                isDark: isDark,
-                                docId: doc.id,
-                                data: data,
-                              );
-                            },
-                          ),
-                        ),
+                                color: const Color(0xFF1565C0),
+                                onRefresh: () async {
+                                  setState(() {}); // stream refreshes itself
+                                },
+                                child: ListView.builder(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 16,
+                                  ),
+                                  itemCount: filtered.length,
+                                  itemBuilder: (context, index) {
+                                    final doc = filtered[index];
+                                    final data = doc.data();
+                                    return _buildInjuryCard(
+                                      isDark: isDark,
+                                      docId: doc.id,
+                                      data: data,
+                                    );
+                                  },
+                                ),
+                              ),
                       ),
                     ),
                   ),
@@ -327,8 +339,11 @@ class _AdminInjuriesScreenState extends State<AdminInjuriesScreen> {
                   value: 'all',
                   child: Row(
                     children: [
-                      Icon(Icons.all_inclusive,
-                          size: 18, color: Color(0xFF1565C0)),
+                      Icon(
+                        Icons.all_inclusive,
+                        size: 18,
+                        color: Color(0xFF1565C0),
+                      ),
                       SizedBox(width: 8),
                       Text('All Status'),
                     ],
@@ -338,8 +353,11 @@ class _AdminInjuriesScreenState extends State<AdminInjuriesScreen> {
                   value: 'pending',
                   child: Row(
                     children: [
-                      Icon(Icons.pending_actions,
-                          size: 18, color: Color(0xFFFFA726)),
+                      Icon(
+                        Icons.pending_actions,
+                        size: 18,
+                        color: Color(0xFFFFA726),
+                      ),
                       SizedBox(width: 8),
                       Text('Pending'),
                     ],
@@ -349,8 +367,11 @@ class _AdminInjuriesScreenState extends State<AdminInjuriesScreen> {
                   value: 'approved',
                   child: Row(
                     children: [
-                      Icon(Icons.check_circle_outline,
-                          size: 18, color: Color(0xFF42A5F5)),
+                      Icon(
+                        Icons.check_circle_outline,
+                        size: 18,
+                        color: Color(0xFF42A5F5),
+                      ),
                       SizedBox(width: 8),
                       Text('Approved'),
                     ],
@@ -360,8 +381,11 @@ class _AdminInjuriesScreenState extends State<AdminInjuriesScreen> {
                   value: 'denied',
                   child: Row(
                     children: [
-                      Icon(Icons.cancel,
-                          size: 18, color: Color.fromARGB(255, 255, 0, 0)),
+                      Icon(
+                        Icons.cancel,
+                        size: 18,
+                        color: Color.fromARGB(255, 255, 0, 0),
+                      ),
                       SizedBox(width: 8),
                       Text('Denied'),
                     ],
@@ -382,8 +406,11 @@ class _AdminInjuriesScreenState extends State<AdminInjuriesScreen> {
                   value: 'all',
                   child: Row(
                     children: [
-                      Icon(Icons.all_inclusive,
-                          size: 18, color: Color(0xFF1565C0)),
+                      Icon(
+                        Icons.all_inclusive,
+                        size: 18,
+                        color: Color(0xFF1565C0),
+                      ),
                       SizedBox(width: 8),
                       Text('All Severity'),
                     ],
@@ -393,8 +420,7 @@ class _AdminInjuriesScreenState extends State<AdminInjuriesScreen> {
                   value: 'critical',
                   child: Row(
                     children: [
-                      Icon(Icons.emergency,
-                          size: 18, color: Color(0xFFE53935)),
+                      Icon(Icons.emergency, size: 18, color: Color(0xFFE53935)),
                       SizedBox(width: 8),
                       Text('Critical'),
                     ],
@@ -404,8 +430,7 @@ class _AdminInjuriesScreenState extends State<AdminInjuriesScreen> {
                   value: 'severe',
                   child: Row(
                     children: [
-                      Icon(Icons.warning,
-                          size: 18, color: Color(0xFFF57C00)),
+                      Icon(Icons.warning, size: 18, color: Color(0xFFF57C00)),
                       SizedBox(width: 8),
                       Text('Severe'),
                     ],
@@ -415,8 +440,7 @@ class _AdminInjuriesScreenState extends State<AdminInjuriesScreen> {
                   value: 'moderate',
                   child: Row(
                     children: [
-                      Icon(Icons.healing,
-                          size: 18, color: Color(0xFFFDD835)),
+                      Icon(Icons.healing, size: 18, color: Color(0xFFFDD835)),
                       SizedBox(width: 8),
                       Text('Moderate'),
                     ],
@@ -426,8 +450,11 @@ class _AdminInjuriesScreenState extends State<AdminInjuriesScreen> {
                   value: 'minor',
                   child: Row(
                     children: [
-                      Icon(Icons.health_and_safety,
-                          size: 18, color: Color(0xFF66BB6A)),
+                      Icon(
+                        Icons.health_and_safety,
+                        size: 18,
+                        color: Color(0xFF66BB6A),
+                      ),
                       SizedBox(width: 8),
                       Text('Minor'),
                     ],
@@ -568,14 +595,17 @@ class _AdminInjuriesScreenState extends State<AdminInjuriesScreen> {
       }
     }
     if (summary.isEmpty) summary = _safeString(data['injuryType'], '');
-    if (summary.isEmpty) summary = _safeString(data['description'], 'No details');
+    if (summary.isEmpty)
+      summary = _safeString(data['description'], 'No details');
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF2A2A2A) : Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: isDark ? Border.all(color: Colors.white.withValues(alpha: 0.1)) : null,
+        border: isDark
+            ? Border.all(color: Colors.white.withValues(alpha: 0.1))
+            : null,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.15),
@@ -604,7 +634,10 @@ class _AdminInjuriesScreenState extends State<AdminInjuriesScreen> {
                 Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
                         color: _severityColor(severity).withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(20),
@@ -635,7 +668,10 @@ class _AdminInjuriesScreenState extends State<AdminInjuriesScreen> {
                     ),
                     const SizedBox(width: 8),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
                         color: _statusColor(status).withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(20),

@@ -14,10 +14,7 @@ class InjuryDetail {
   }
 
   Map<String, dynamic> toMap() {
-    return {
-      'bodyPart': bodyPart,
-      'injuryType': injuryType,
-    };
+    return {'bodyPart': bodyPart, 'injuryType': injuryType};
   }
 }
 
@@ -75,11 +72,11 @@ class Injury {
       patientName: data['patientName'] ?? '',
       patientBirthDate: (data['patientBirthDate'] as Timestamp).toDate(),
       injuries:
-      (data['injuries'] as List<dynamic>?)
-          ?.map(
-            (item) => InjuryDetail.fromMap(item as Map<String, dynamic>),
-      )
-          .toList() ??
+          (data['injuries'] as List<dynamic>?)
+              ?.map(
+                (item) => InjuryDetail.fromMap(item as Map<String, dynamic>),
+              )
+              .toList() ??
           [],
       severity: data['severity'] ?? 'minor',
 
@@ -129,7 +126,8 @@ class Injury {
     return '${injuries.length} injuries';
   }
 
-  List<String> get affectedBodyParts => injuries.map((i) => i.bodyPart).toList();
+  List<String> get affectedBodyParts =>
+      injuries.map((i) => i.bodyPart).toList();
 
   int getPatientAge() {
     final age = timestamp.year - patientBirthDate.year;

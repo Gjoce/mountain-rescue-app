@@ -75,7 +75,7 @@ class _AddRescuerScreenState extends State<AddRescuerScreen> {
         'name': _nameController.text.trim(),
         'email': _emailController.text.trim(),
         'role': 'rescuer',
-        'isActive' : true,
+        'isActive': true,
         'createdAt': FieldValue.serverTimestamp(),
       });
 
@@ -113,18 +113,18 @@ class _AddRescuerScreenState extends State<AddRescuerScreen> {
         message = 'Generated password is too weak.';
       } else if (e.code == 'operation-not-allowed') {
         message =
-        'Email/password accounts are not enabled in Firebase Auth settings.';
+            'Email/password accounts are not enabled in Firebase Auth settings.';
       }
 
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message)));
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Unexpected error: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Unexpected error: $e')));
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);
@@ -161,7 +161,7 @@ class _AddRescuerScreenState extends State<AddRescuerScreen> {
                   border: OutlineInputBorder(),
                 ),
                 validator: (v) =>
-                v == null || v.trim().isEmpty ? 'Enter rescuer name' : null,
+                    v == null || v.trim().isEmpty ? 'Enter rescuer name' : null,
               ),
               const SizedBox(height: 16),
               TextFormField(
@@ -188,13 +188,13 @@ class _AddRescuerScreenState extends State<AddRescuerScreen> {
                   onPressed: _isLoading ? null : _addRescuer,
                   icon: _isLoading
                       ? const SizedBox(
-                    width: 22,
-                    height: 22,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Colors.white,
-                    ),
-                  )
+                          width: 22,
+                          height: 22,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
                       : const Icon(Icons.person_add),
                   label: Text(
                     _isLoading ? 'Creating...' : 'Add Rescuer',

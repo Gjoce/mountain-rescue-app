@@ -49,15 +49,15 @@ class RescuerHomeScreen extends ConsumerWidget {
             end: Alignment.bottomRight,
             colors: isDark
                 ? [
-              const Color(0xFF1A237E),
-              const Color(0xFF0D47A1),
-              const Color(0xFF01579B),
-            ]
+                    const Color(0xFF1A237E),
+                    const Color(0xFF0D47A1),
+                    const Color(0xFF01579B),
+                  ]
                 : [
-              const Color(0xFF1565C0),
-              const Color(0xFF1976D2),
-              const Color(0xFF42A5F5),
-            ],
+                    const Color(0xFF1565C0),
+                    const Color(0xFF1976D2),
+                    const Color(0xFF42A5F5),
+                  ],
           ),
         ),
         child: SafeArea(
@@ -180,7 +180,9 @@ class RescuerHomeScreen extends ConsumerWidget {
                   Expanded(
                     child: Container(
                       decoration: BoxDecoration(
-                        color: isDark ? const Color(0xFF1E1E1E) : Colors.grey[50],
+                        color: isDark
+                            ? const Color(0xFF1E1E1E)
+                            : Colors.grey[50],
                         borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(30),
                           topRight: Radius.circular(30),
@@ -212,7 +214,7 @@ class RescuerHomeScreen extends ConsumerWidget {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) =>
-                                    const InjuryRegistrationScreen(),
+                                        const InjuryRegistrationScreen(),
                                   ),
                                 );
                               },
@@ -236,7 +238,7 @@ class RescuerHomeScreen extends ConsumerWidget {
                                       context,
                                       MaterialPageRoute(
                                         builder: (_) =>
-                                        const PastInjuriesScreen(),
+                                            const PastInjuriesScreen(),
                                       ),
                                     );
                                   },
@@ -251,7 +253,7 @@ class RescuerHomeScreen extends ConsumerWidget {
                                       context,
                                       MaterialPageRoute(
                                         builder: (_) =>
-                                        const RescuerSettingsScreen(),
+                                            const RescuerSettingsScreen(),
                                       ),
                                     );
                                   },
@@ -264,16 +266,18 @@ class RescuerHomeScreen extends ConsumerWidget {
                               icon: const Icon(Icons.logout),
                               label: const Text('Log Out'),
                               style: OutlinedButton.styleFrom(
-                                foregroundColor:
-                                isDark ? Colors.red[300] : Colors.red[700],
+                                foregroundColor: isDark
+                                    ? Colors.red[300]
+                                    : Colors.red[700],
                                 side: BorderSide(
                                   color: isDark
                                       ? Colors.red[300]!
                                       : Colors.red[700]!,
                                   width: 2,
                                 ),
-                                padding:
-                                const EdgeInsets.symmetric(vertical: 16),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                ),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
@@ -416,7 +420,9 @@ class _ActionCard extends StatelessWidget {
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
-            border: isDark ? Border.all(color: Colors.white.withValues(alpha: 0.1)) : null,
+            border: isDark
+                ? Border.all(color: Colors.white.withValues(alpha: 0.1))
+                : null,
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

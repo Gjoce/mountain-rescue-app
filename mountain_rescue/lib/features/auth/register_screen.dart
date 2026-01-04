@@ -52,9 +52,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     } catch (e) {
       if (!mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Register failed: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Register failed: $e')));
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -154,9 +154,12 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                             border: const OutlineInputBorder(),
                             suffixIcon: IconButton(
                               icon: Icon(
-                                _obscure ? Icons.visibility : Icons.visibility_off,
+                                _obscure
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
                               ),
-                              onPressed: () => setState(() => _obscure = !_obscure),
+                              onPressed: () =>
+                                  setState(() => _obscure = !_obscure),
                             ),
                           ),
                           validator: (v) {
@@ -165,7 +168,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                             if (value.length < 6) return 'Min 6 characters';
                             return null;
                           },
-                          onFieldSubmitted: (_) => _loading ? null : _register(),
+                          onFieldSubmitted: (_) =>
+                              _loading ? null : _register(),
                         ),
 
                         const SizedBox(height: 18),
@@ -184,17 +188,20 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                             ),
                             child: _loading
                                 ? const SizedBox(
-                              width: 22,
-                              height: 22,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: Colors.white,
-                              ),
-                            )
+                                    width: 22,
+                                    height: 22,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: Colors.white,
+                                    ),
+                                  )
                                 : const Text(
-                              'Register',
-                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                            ),
+                                    'Register',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
                           ),
                         ),
                         const SizedBox(height: 10),

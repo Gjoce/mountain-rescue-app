@@ -36,8 +36,10 @@ class ManageRescuersScreen extends StatelessWidget {
 
           // Sort locally by creation date
           rescuers.sort((a, b) {
-            final aTime = (a['createdAt'] as Timestamp?)?.toDate() ?? DateTime(0);
-            final bTime = (b['createdAt'] as Timestamp?)?.toDate() ?? DateTime(0);
+            final aTime =
+                (a['createdAt'] as Timestamp?)?.toDate() ?? DateTime(0);
+            final bTime =
+                (b['createdAt'] as Timestamp?)?.toDate() ?? DateTime(0);
             return bTime.compareTo(aTime);
           });
 
@@ -80,12 +82,17 @@ class ManageRescuersScreen extends StatelessWidget {
                       ),
                       const SizedBox(width: 8),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
                           color: _statusColor(isActive).withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(
-                            color: _statusColor(isActive).withValues(alpha: 0.45),
+                            color: _statusColor(
+                              isActive,
+                            ).withValues(alpha: 0.45),
                           ),
                         ),
                         child: Text(
@@ -107,7 +114,10 @@ class ManageRescuersScreen extends StatelessWidget {
                       if (createdAt != null)
                         Text(
                           'Joined: ${createdAt.toLocal().toString().split(' ')[0]}',
-                          style: TextStyle(color: Colors.grey[600], fontSize: 12),
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                            fontSize: 12,
+                          ),
                         ),
                     ],
                   ),

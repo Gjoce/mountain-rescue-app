@@ -37,7 +37,8 @@ class _AdminSettingsScreenState extends ConsumerState<AdminSettingsScreen> {
 
   Future<void> _changeDisplayName() async {
     final doc = await _userDoc();
-    final currentName = (doc.data()?['name'] ?? _user.displayName ?? '').toString();
+    final currentName = (doc.data()?['name'] ?? _user.displayName ?? '')
+        .toString();
 
     final controller = TextEditingController(text: currentName);
 
@@ -65,10 +66,9 @@ class _AdminSettingsScreenState extends ConsumerState<AdminSettingsScreen> {
 
               await _user.updateDisplayName(newName);
 
-              await _firestore
-                  .collection('users')
-                  .doc(_user.uid)
-                  .set({'name': newName}, SetOptions(merge: true));
+              await _firestore.collection('users').doc(_user.uid).set({
+                'name': newName,
+              }, SetOptions(merge: true));
 
               ref.invalidate(currentUserProvider);
 
@@ -103,17 +103,18 @@ class _AdminSettingsScreenState extends ConsumerState<AdminSettingsScreen> {
 
     final rescuerCount =
         (await firestore
-            .collection('users')
-            .where('role', isEqualTo: 'rescuer')
-            .get())
+                .collection('users')
+                .where('role', isEqualTo: 'rescuer')
+                .get())
             .docs
             .length;
 
-    final injuryCount = (await firestore.collection('injuries').get()).docs.length;
+    final injuryCount =
+        (await firestore.collection('injuries').get()).docs.length;
 
     final userDoc = await firestore.collection('users').doc(_user.uid).get();
-    final adminName =
-    (userDoc.data()?['name'] ?? _user.displayName ?? 'N/A').toString();
+    final adminName = (userDoc.data()?['name'] ?? _user.displayName ?? 'N/A')
+        .toString();
 
     final reportData = {
       'Admin Name': adminName,
@@ -144,7 +145,7 @@ class _AdminSettingsScreenState extends ConsumerState<AdminSettingsScreen> {
               pw.Divider(),
               pw.SizedBox(height: 20),
               ...reportData.entries.map(
-                    (e) => pw.Padding(
+                (e) => pw.Padding(
                   padding: const pw.EdgeInsets.symmetric(vertical: 6),
                   child: pw.Text(
                     '${e.key}: ${e.value}',
@@ -163,8 +164,8 @@ class _AdminSettingsScreenState extends ConsumerState<AdminSettingsScreen> {
 
   Future<void> _contactSupport() async {
     final userDoc = await _userDoc();
-    final adminName =
-    (userDoc.data()?['name'] ?? _user.displayName ?? 'Admin').toString();
+    final adminName = (userDoc.data()?['name'] ?? _user.displayName ?? 'Admin')
+        .toString();
 
     final uri = Uri(
       scheme: 'mailto',
@@ -172,7 +173,7 @@ class _AdminSettingsScreenState extends ConsumerState<AdminSettingsScreen> {
       queryParameters: {
         'subject': 'Admin Support Request',
         'body':
-        'Hello,\n\nI need help with the Mountain Rescue admin panel.\n\nBest regards,\n$adminName',
+            'Hello,\n\nI need help with the Mountain Rescue admin panel.\n\nBest regards,\n$adminName',
       },
     );
 
@@ -249,24 +250,23 @@ class _AdminSettingsScreenState extends ConsumerState<AdminSettingsScreen> {
 
       await _user.updatePhotoURL(downloadUrl);
 
-      await _firestore.collection('users').doc(_user.uid).set(
-        {'photoUrl': downloadUrl},
-        SetOptions(merge: true),
-      );
+      await _firestore.collection('users').doc(_user.uid).set({
+        'photoUrl': downloadUrl,
+      }, SetOptions(merge: true));
 
       ref.invalidate(currentUserProvider);
 
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Profile photo updated')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Profile photo updated')));
 
       setState(() {});
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to update photo: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to update photo: $e')));
     } finally {
       if (mounted) setState(() => _uploadingPhoto = false);
     }
@@ -286,11 +286,10 @@ class _AdminSettingsScreenState extends ConsumerState<AdminSettingsScreen> {
       future: _userDoc(),
       builder: (context, snapshot) {
         final data = snapshot.data?.data();
-        final displayName =
-        (data?['name'] ?? _user.displayName ?? 'Admin').toString();
+        final displayName = (data?['name'] ?? _user.displayName ?? 'Admin')
+            .toString();
 
-        final photoUrl =
-        (data?['photoUrl'] ?? _user.photoURL)?.toString();
+        final photoUrl = (data?['photoUrl'] ?? _user.photoURL)?.toString();
 
         return Scaffold(
           appBar: AppBar(
@@ -320,15 +319,16 @@ class _AdminSettingsScreenState extends ConsumerState<AdminSettingsScreen> {
                           children: [
                             CircleAvatar(
                               radius: 48,
-                              backgroundImage:
-                              photoUrl != null ? NetworkImage(photoUrl) : null,
+                              backgroundImage: photoUrl != null
+                                  ? NetworkImage(photoUrl)
+                                  : null,
                               backgroundColor: Colors.white,
                               child: photoUrl == null
                                   ? const Icon(
-                                Icons.admin_panel_settings,
-                                color: Color(0xFF1565C0),
-                                size: 48,
-                              )
+                                      Icons.admin_panel_settings,
+                                      color: Color(0xFF1565C0),
+                                      size: 48,
+                                    )
                                   : null,
                             ),
                             Positioned(
@@ -346,7 +346,9 @@ class _AdminSettingsScreenState extends ConsumerState<AdminSettingsScreen> {
                                     borderRadius: BorderRadius.circular(18),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: Colors.black.withValues(alpha: 0.15),
+                                        color: Colors.black.withValues(
+                                          alpha: 0.15,
+                                        ),
                                         blurRadius: 8,
                                         offset: const Offset(0, 2),
                                       ),
@@ -354,15 +356,17 @@ class _AdminSettingsScreenState extends ConsumerState<AdminSettingsScreen> {
                                   ),
                                   child: _uploadingPhoto
                                       ? const SizedBox(
-                                    width: 18,
-                                    height: 18,
-                                    child: CircularProgressIndicator(strokeWidth: 2),
-                                  )
+                                          width: 18,
+                                          height: 18,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                          ),
+                                        )
                                       : const Icon(
-                                    Icons.camera_alt,
-                                    size: 18,
-                                    color: Color(0xFF1565C0),
-                                  ),
+                                          Icons.camera_alt,
+                                          size: 18,
+                                          color: Color(0xFF1565C0),
+                                        ),
                                 ),
                               ),
                             ),
@@ -390,7 +394,9 @@ class _AdminSettingsScreenState extends ConsumerState<AdminSettingsScreen> {
                           icon: const Icon(Icons.edit),
                           label: const Text('Edit Name'),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white.withValues(alpha: 0.2),
+                            backgroundColor: Colors.white.withValues(
+                              alpha: 0.2,
+                            ),
                             foregroundColor: Colors.white,
                           ),
                         ),
@@ -407,13 +413,18 @@ class _AdminSettingsScreenState extends ConsumerState<AdminSettingsScreen> {
                     ),
                     subtitle: Text(
                       'Upload a new avatar photo',
-                      style: TextStyle(color: Colors.white.withValues(alpha: 0.8)),
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.8),
+                      ),
                     ),
                     onTap: _uploadingPhoto ? null : _pickAndUploadProfilePhoto,
                   ),
 
                   ListTile(
-                    leading: const Icon(Icons.lock_outline, color: Colors.white),
+                    leading: const Icon(
+                      Icons.lock_outline,
+                      color: Colors.white,
+                    ),
                     title: const Text(
                       'Change Password',
                       style: TextStyle(color: Colors.white),
@@ -421,7 +432,10 @@ class _AdminSettingsScreenState extends ConsumerState<AdminSettingsScreen> {
                     onTap: _resetPassword,
                   ),
                   ListTile(
-                    leading: const Icon(Icons.picture_as_pdf, color: Colors.white),
+                    leading: const Icon(
+                      Icons.picture_as_pdf,
+                      color: Colors.white,
+                    ),
                     title: const Text(
                       'Export System Report (PDF)',
                       style: TextStyle(color: Colors.white),
@@ -429,7 +443,10 @@ class _AdminSettingsScreenState extends ConsumerState<AdminSettingsScreen> {
                     onTap: _exportAdminReport,
                   ),
                   ListTile(
-                    leading: const Icon(Icons.email_outlined, color: Colors.white),
+                    leading: const Icon(
+                      Icons.email_outlined,
+                      color: Colors.white,
+                    ),
                     title: const Text(
                       'Contact Support',
                       style: TextStyle(color: Colors.white),
@@ -437,7 +454,10 @@ class _AdminSettingsScreenState extends ConsumerState<AdminSettingsScreen> {
                     onTap: _contactSupport,
                   ),
                   ListTile(
-                    leading: const Icon(Icons.info_outline, color: Colors.white),
+                    leading: const Icon(
+                      Icons.info_outline,
+                      color: Colors.white,
+                    ),
                     title: const Text(
                       'About App',
                       style: TextStyle(color: Colors.white),
@@ -448,7 +468,7 @@ class _AdminSettingsScreenState extends ConsumerState<AdminSettingsScreen> {
                         applicationName: 'Mountain Rescue - Admin Panel',
                         applicationVersion: '1.2.0',
                         applicationLegalese:
-                        '© 2025 Mountain Rescue Team. All rights reserved.',
+                            '© 2025 Mountain Rescue Team. All rights reserved.',
                       );
                     },
                   ),

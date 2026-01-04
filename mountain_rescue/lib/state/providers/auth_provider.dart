@@ -41,10 +41,10 @@ final currentUserProvider = StreamProvider<UserModel?>((ref) {
           .doc(firebaseUser.uid)
           .snapshots()
           .map((doc) {
-        if (!doc.exists) return null;
-        final data = doc.data() as Map<String, dynamic>;
-        return UserModel.fromMap(data, doc.id);
-      });
+            if (!doc.exists) return null;
+            final data = doc.data() as Map<String, dynamic>;
+            return UserModel.fromMap(data, doc.id);
+          });
     },
     loading: () => Stream<UserModel?>.value(null),
     error: (_, __) => Stream<UserModel?>.value(null),

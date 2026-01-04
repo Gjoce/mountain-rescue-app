@@ -25,9 +25,9 @@ class InjuryRepository {
         .snapshots()
         .map(
           (snapshot) => snapshot.docs
-          .map((doc) => Injury.fromMap(doc.data(), doc.id))
-          .toList(),
-    );
+              .map((doc) => Injury.fromMap(doc.data(), doc.id))
+              .toList(),
+        );
   }
 
   Future<Injury?> getInjuryById(String id) async {
@@ -38,8 +38,9 @@ class InjuryRepository {
 
   Future<String> createInjury(Map<String, dynamic> injuryData) async {
     try {
-      final docRef =
-      await _firestore.collection(_collectionName).add(injuryData);
+      final docRef = await _firestore
+          .collection(_collectionName)
+          .add(injuryData);
       return docRef.id;
     } catch (e) {
       throw Exception('Failed to create injury report: $e');
@@ -54,9 +55,9 @@ class InjuryRepository {
         .snapshots()
         .map(
           (snapshot) => snapshot.docs
-          .map((doc) => Injury.fromMap(doc.data(), doc.id))
-          .toList(),
-    );
+              .map((doc) => Injury.fromMap(doc.data(), doc.id))
+              .toList(),
+        );
   }
 
   Stream<List<Injury>> getAllInjuries() {
@@ -66,9 +67,9 @@ class InjuryRepository {
         .snapshots()
         .map(
           (snapshot) => snapshot.docs
-          .map((doc) => Injury.fromMap(doc.data(), doc.id))
-          .toList(),
-    );
+              .map((doc) => Injury.fromMap(doc.data(), doc.id))
+              .toList(),
+        );
   }
 
   Stream<List<Injury>> getInjuriesBySeverity(String severity) {
@@ -79,9 +80,9 @@ class InjuryRepository {
         .snapshots()
         .map(
           (snapshot) => snapshot.docs
-          .map((doc) => Injury.fromMap(doc.data(), doc.id))
-          .toList(),
-    );
+              .map((doc) => Injury.fromMap(doc.data(), doc.id))
+              .toList(),
+        );
   }
 
   // ✅ UPDATED: slope is now identified by slopeId (int) instead of skiSlope (string)
@@ -93,9 +94,9 @@ class InjuryRepository {
         .snapshots()
         .map(
           (snapshot) => snapshot.docs
-          .map((doc) => Injury.fromMap(doc.data(), doc.id))
-          .toList(),
-    );
+              .map((doc) => Injury.fromMap(doc.data(), doc.id))
+              .toList(),
+        );
   }
 
   // ✅ OPTIONAL (backward compatibility): still supports old string field if you need it
@@ -107,9 +108,9 @@ class InjuryRepository {
         .snapshots()
         .map(
           (snapshot) => snapshot.docs
-          .map((doc) => Injury.fromMap(doc.data(), doc.id))
-          .toList(),
-    );
+              .map((doc) => Injury.fromMap(doc.data(), doc.id))
+              .toList(),
+        );
   }
 
   Future<void> updateInjuryStatus(String id, String status) async {
@@ -149,23 +150,23 @@ class InjuryRepository {
   }
 
   Stream<List<Injury>> getInjuriesByDateRange(
-      DateTime startDate,
-      DateTime endDate,
-      ) {
+    DateTime startDate,
+    DateTime endDate,
+  ) {
     return _firestore
         .collection(_collectionName)
         .where(
-      'timestamp',
-      isGreaterThanOrEqualTo: Timestamp.fromDate(startDate),
-    )
+          'timestamp',
+          isGreaterThanOrEqualTo: Timestamp.fromDate(startDate),
+        )
         .where('timestamp', isLessThanOrEqualTo: Timestamp.fromDate(endDate))
         .orderBy('timestamp', descending: true)
         .snapshots()
         .map(
           (snapshot) => snapshot.docs
-          .map((doc) => Injury.fromMap(doc.data(), doc.id))
-          .toList(),
-    );
+              .map((doc) => Injury.fromMap(doc.data(), doc.id))
+              .toList(),
+        );
   }
 
   Stream<List<Injury>> getRecentInjuries() {
@@ -173,16 +174,16 @@ class InjuryRepository {
     return _firestore
         .collection(_collectionName)
         .where(
-      'timestamp',
-      isGreaterThanOrEqualTo: Timestamp.fromDate(yesterday),
-    )
+          'timestamp',
+          isGreaterThanOrEqualTo: Timestamp.fromDate(yesterday),
+        )
         .orderBy('timestamp', descending: true)
         .snapshots()
         .map(
           (snapshot) => snapshot.docs
-          .map((doc) => Injury.fromMap(doc.data(), doc.id))
-          .toList(),
-    );
+              .map((doc) => Injury.fromMap(doc.data(), doc.id))
+              .toList(),
+        );
   }
 
   // ✅ UPDATED: statistics now count by slopeId + slopeName (new fields)
@@ -244,7 +245,7 @@ class InjuryRepository {
     );
 
     request.headers["Authorization"] =
-    "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhyZ2hjYWFxeGt6bnpwd2V4dWFxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE5MTcyMTUsImV4cCI6MjA3NzQ5MzIxNX0.rBvDfhjFOM-crmmZ_csEh63fnQYYfR2StGPmlt8CcTc";
+        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhyZ2hjYWFxeGt6bnpwd2V4dWFxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE5MTcyMTUsImV4cCI6MjA3NzQ5MzIxNX0.rBvDfhjFOM-crmmZ_csEh63fnQYYfR2StGPmlt8CcTc";
 
     final response = await request.send();
     final body = await response.stream.bytesToString();
