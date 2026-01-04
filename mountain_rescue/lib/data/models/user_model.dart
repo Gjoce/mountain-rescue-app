@@ -1,14 +1,16 @@
-class AppUser {
+class UserModel {
   final String id;
   final String email;
   final String name;
   final String role;
 
-  // NEW
+  // NEW: rescuer availability (active/inactive)
   final bool isActive;
+
+  // NEW: profile picture url (optional)
   final String? photoUrl;
 
-  AppUser({
+  UserModel({
     required this.id,
     required this.email,
     required this.name,
@@ -17,13 +19,13 @@ class AppUser {
     this.photoUrl,
   });
 
-  factory AppUser.fromMap(Map<String, dynamic> data, String id) {
-    return AppUser(
+  factory UserModel.fromMap(Map<String, dynamic> data, String id) {
+    return UserModel(
       id: id,
       email: (data['email'] ?? '').toString(),
       name: (data['name'] ?? '').toString(),
       role: (data['role'] ?? 'rescuer').toString(),
-      isActive: data['isActive'] is bool ? data['isActive'] as bool : true,
+      isActive: (data['isActive'] as bool?) ?? true,
       photoUrl: data['photoUrl']?.toString(),
     );
   }
@@ -38,14 +40,14 @@ class AppUser {
     };
   }
 
-  AppUser copyWith({
+  UserModel copyWith({
     String? email,
     String? name,
     String? role,
     bool? isActive,
     String? photoUrl,
   }) {
-    return AppUser(
+    return UserModel(
       id: id,
       email: email ?? this.email,
       name: name ?? this.name,

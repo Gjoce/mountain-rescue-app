@@ -49,15 +49,15 @@ class RescuerHomeScreen extends ConsumerWidget {
             end: Alignment.bottomRight,
             colors: isDark
                 ? [
-                    const Color(0xFF1A237E),
-                    const Color(0xFF0D47A1),
-                    const Color(0xFF01579B),
-                  ]
+              const Color(0xFF1A237E),
+              const Color(0xFF0D47A1),
+              const Color(0xFF01579B),
+            ]
                 : [
-                    const Color(0xFF1565C0),
-                    const Color(0xFF1976D2),
-                    const Color(0xFF42A5F5),
-                  ],
+              const Color(0xFF1565C0),
+              const Color(0xFF1976D2),
+              const Color(0xFF42A5F5),
+            ],
           ),
         ),
         child: SafeArea(
@@ -71,6 +71,12 @@ class RescuerHomeScreen extends ConsumerWidget {
             ),
             data: (user) {
               final rescuerName = user?.name ?? "Rescuer";
+
+              // NEW: dynamic status (default true if user is null)
+              final isActive = user?.isActive ?? true;
+
+              final statusLabel = isActive ? 'ACTIVE' : 'NOT ACTIVE';
+              final statusColor = isActive ? Colors.green : Colors.red;
 
               return Column(
                 children: [
@@ -153,12 +159,12 @@ class RescuerHomeScreen extends ConsumerWidget {
                                   vertical: 4,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: Colors.green,
+                                  color: statusColor,
                                   borderRadius: BorderRadius.circular(8),
                                 ),
-                                child: const Text(
-                                  'ACTIVE',
-                                  style: TextStyle(
+                                child: Text(
+                                  statusLabel,
+                                  style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 12,
                                     fontWeight: FontWeight.bold,
@@ -171,13 +177,10 @@ class RescuerHomeScreen extends ConsumerWidget {
                       ],
                     ),
                   ),
-
                   Expanded(
                     child: Container(
                       decoration: BoxDecoration(
-                        color: isDark
-                            ? const Color(0xFF1E1E1E)
-                            : Colors.grey[50],
+                        color: isDark ? const Color(0xFF1E1E1E) : Colors.grey[50],
                         borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(30),
                           topRight: Radius.circular(30),
@@ -197,7 +200,6 @@ class RescuerHomeScreen extends ConsumerWidget {
                               ),
                             ),
                             const SizedBox(height: 20),
-
                             _PrimaryActionCard(
                               icon: Icons.add_circle,
                               title: 'Register an Injury',
@@ -210,14 +212,12 @@ class RescuerHomeScreen extends ConsumerWidget {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) =>
-                                        const InjuryRegistrationScreen(),
+                                    const InjuryRegistrationScreen(),
                                   ),
                                 );
                               },
                             ),
-
                             const SizedBox(height: 16),
-
                             GridView.count(
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
@@ -236,7 +236,7 @@ class RescuerHomeScreen extends ConsumerWidget {
                                       context,
                                       MaterialPageRoute(
                                         builder: (_) =>
-                                            const PastInjuriesScreen(),
+                                        const PastInjuriesScreen(),
                                       ),
                                     );
                                   },
@@ -251,41 +251,35 @@ class RescuerHomeScreen extends ConsumerWidget {
                                       context,
                                       MaterialPageRoute(
                                         builder: (_) =>
-                                            const RescuerSettingsScreen(),
+                                        const RescuerSettingsScreen(),
                                       ),
                                     );
                                   },
                                 ),
                               ],
                             ),
-
                             const SizedBox(height: 24),
-
                             OutlinedButton.icon(
                               onPressed: () => _showLogoutDialog(context, ref),
                               icon: const Icon(Icons.logout),
                               label: const Text('Log Out'),
                               style: OutlinedButton.styleFrom(
-                                foregroundColor: isDark
-                                    ? Colors.red[300]
-                                    : Colors.red[700],
+                                foregroundColor:
+                                isDark ? Colors.red[300] : Colors.red[700],
                                 side: BorderSide(
                                   color: isDark
                                       ? Colors.red[300]!
                                       : Colors.red[700]!,
                                   width: 2,
                                 ),
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 16,
-                                ),
+                                padding:
+                                const EdgeInsets.symmetric(vertical: 16),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                               ),
                             ),
-
                             const SizedBox(height: 16),
-
                             Center(
                               child: Text(
                                 'Mountain Rescue • Ski Patrol System',
@@ -422,9 +416,7 @@ class _ActionCard extends StatelessWidget {
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
-            border: isDark
-                ? Border.all(color: Colors.white.withValues(alpha: 0.1))
-                : null,
+            border: isDark ? Border.all(color: Colors.white.withValues(alpha: 0.1)) : null,
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

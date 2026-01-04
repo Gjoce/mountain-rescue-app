@@ -116,9 +116,7 @@ class _InjuryDetailScreenState extends ConsumerState<InjuryDetailScreen> {
                 padding: const pw.EdgeInsets.all(16),
                 decoration: pw.BoxDecoration(
                   color: PdfColors.blue800,
-                  borderRadius: const pw.BorderRadius.all(
-                    pw.Radius.circular(8),
-                  ),
+                  borderRadius: const pw.BorderRadius.all(pw.Radius.circular(8)),
                 ),
                 child: pw.Row(
                   mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
@@ -171,7 +169,15 @@ class _InjuryDetailScreenState extends ConsumerState<InjuryDetailScreen> {
               ),
               pw.Divider(thickness: 2, color: PdfColors.blue800),
               pw.SizedBox(height: 8),
-              _buildPdfInfoRow('Location', injury.skiSlope),
+
+              // ✅ UPDATED: slopeName instead of skiSlope
+              _buildPdfInfoRow(
+                'Location',
+                injury.slopeName.isNotEmpty
+                    ? '${injury.slopeName} (ID: ${injury.slopeId})'
+                    : 'Slope ID: ${injury.slopeId}',
+              ),
+
               _buildPdfInfoRow('Severity', injury.severity.toUpperCase()),
               _buildPdfInfoRow('Status', injury.status.toUpperCase()),
               _buildPdfInfoRow(
@@ -344,7 +350,8 @@ class _InjuryDetailScreenState extends ConsumerState<InjuryDetailScreen> {
         }
 
         final injury = snapshot.data!;
-        final currentStatus = (injury.status.isEmpty ? 'pending' : injury.status).toLowerCase();
+        final currentStatus =
+        (injury.status.isEmpty ? 'pending' : injury.status).toLowerCase();
 
         return Scaffold(
           backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.grey[50],
@@ -365,7 +372,6 @@ class _InjuryDetailScreenState extends ConsumerState<InjuryDetailScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // HEADER
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(20),
@@ -389,7 +395,10 @@ class _InjuryDetailScreenState extends ConsumerState<InjuryDetailScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 8,
+                            ),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(20),
@@ -423,7 +432,10 @@ class _InjuryDetailScreenState extends ConsumerState<InjuryDetailScreen> {
                           ),
                           const SizedBox(width: 12),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 8,
+                            ),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(20),
@@ -463,7 +475,10 @@ class _InjuryDetailScreenState extends ConsumerState<InjuryDetailScreen> {
                       ),
                       const SizedBox(height: 16),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.white.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(12),
@@ -485,7 +500,6 @@ class _InjuryDetailScreenState extends ConsumerState<InjuryDetailScreen> {
                   padding: const EdgeInsets.all(16),
                   child: Column(
                     children: [
-                      // ✅ ADMIN STATUS EDITOR (only visible to admins)
                       FutureBuilder<bool>(
                         future: _isAdmin(),
                         builder: (context, adminSnap) {
@@ -501,14 +515,14 @@ class _InjuryDetailScreenState extends ConsumerState<InjuryDetailScreen> {
                                 isDark: isDark,
                                 currentStatus: currentStatus,
                                 saving: _savingStatus,
-                                onSave: (newStatus) => _updateStatus(injury.id, newStatus),
+                                onSave: (newStatus) =>
+                                    _updateStatus(injury.id, newStatus),
                                 statusColor: _statusColor,
                               ),
                             ],
                           );
                         },
                       ),
-
                       const SizedBox(height: 16),
 
                       _buildSection(
@@ -516,12 +530,18 @@ class _InjuryDetailScreenState extends ConsumerState<InjuryDetailScreen> {
                         icon: Icons.person,
                         title: 'Patient Information',
                         children: [
-                          _buildInfoRow(Icons.badge, 'Full Name', injury.patientName, isDark),
+                          _buildInfoRow(
+                            Icons.badge,
+                            'Full Name',
+                            injury.patientName,
+                            isDark,
+                          ),
                           const SizedBox(height: 12),
                           _buildInfoRow(
                             Icons.cake,
                             'Date of Birth',
-                            DateFormat('dd MMM yyyy').format(injury.patientBirthDate),
+                            DateFormat('dd MMM yyyy')
+                                .format(injury.patientBirthDate),
                             isDark,
                           ),
                           const SizedBox(height: 12),
@@ -541,12 +561,21 @@ class _InjuryDetailScreenState extends ConsumerState<InjuryDetailScreen> {
                         icon: Icons.location_on,
                         title: 'Incident Information',
                         children: [
-                          _buildInfoRow(Icons.landscape, 'Location', injury.skiSlope, isDark),
+                          // ✅ UPDATED: show slopeName + slopeId
+                          _buildInfoRow(
+                            Icons.landscape,
+                            'Location',
+                            injury.slopeName.isNotEmpty
+                                ? '${injury.slopeName} (ID: ${injury.slopeId})'
+                                : 'Slope ID: ${injury.slopeId}',
+                            isDark,
+                          ),
                           const SizedBox(height: 12),
                           _buildInfoRow(
                             Icons.access_time,
                             'Date & Time',
-                            DateFormat('dd MMM yyyy – HH:mm').format(injury.timestamp),
+                            DateFormat('dd MMM yyyy – HH:mm')
+                                .format(injury.timestamp),
                             isDark,
                           ),
                         ],
@@ -564,15 +593,19 @@ class _InjuryDetailScreenState extends ConsumerState<InjuryDetailScreen> {
                             final inj = entry.value;
                             return Padding(
                               padding: EdgeInsets.only(
-                                bottom: index < injury.injuries.length - 1 ? 12 : 0,
+                                bottom: index < injury.injuries.length - 1
+                                    ? 12
+                                    : 0,
                               ),
                               child: Container(
                                 padding: const EdgeInsets.all(12),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFE53935).withValues(alpha: 0.1),
+                                  color: const Color(0xFFE53935)
+                                      .withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(12),
                                   border: Border.all(
-                                    color: const Color(0xFFE53935).withValues(alpha: 0.3),
+                                    color: const Color(0xFFE53935)
+                                        .withValues(alpha: 0.3),
                                   ),
                                 ),
                                 child: Row(
@@ -580,7 +613,8 @@ class _InjuryDetailScreenState extends ConsumerState<InjuryDetailScreen> {
                                     Container(
                                       padding: const EdgeInsets.all(8),
                                       decoration: BoxDecoration(
-                                        color: const Color(0xFFE53935).withValues(alpha: 0.15),
+                                        color: const Color(0xFFE53935)
+                                            .withValues(alpha: 0.15),
                                         shape: BoxShape.circle,
                                       ),
                                       child: const Icon(
@@ -592,14 +626,17 @@ class _InjuryDetailScreenState extends ConsumerState<InjuryDetailScreen> {
                                     const SizedBox(width: 12),
                                     Expanded(
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                         children: [
                                           Text(
                                             inj.bodyPart,
                                             style: TextStyle(
                                               fontSize: 15,
                                               fontWeight: FontWeight.bold,
-                                              color: isDark ? Colors.white : Colors.grey[900],
+                                              color: isDark
+                                                  ? Colors.white
+                                                  : Colors.grey[900],
                                             ),
                                           ),
                                           const SizedBox(height: 2),
@@ -607,7 +644,9 @@ class _InjuryDetailScreenState extends ConsumerState<InjuryDetailScreen> {
                                             inj.injuryType,
                                             style: TextStyle(
                                               fontSize: 13,
-                                              color: isDark ? Colors.grey[400] : Colors.grey[700],
+                                              color: isDark
+                                                  ? Colors.grey[400]
+                                                  : Colors.grey[700],
                                             ),
                                           ),
                                         ],
@@ -632,7 +671,9 @@ class _InjuryDetailScreenState extends ConsumerState<InjuryDetailScreen> {
                             width: double.infinity,
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
-                              color: isDark ? const Color(0xFF3A3A3A) : Colors.grey[100],
+                              color: isDark
+                                  ? const Color(0xFF3A3A3A)
+                                  : Colors.grey[100],
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
                                 color: isDark
@@ -645,7 +686,9 @@ class _InjuryDetailScreenState extends ConsumerState<InjuryDetailScreen> {
                               style: TextStyle(
                                 fontSize: 14,
                                 height: 1.5,
-                                color: isDark ? Colors.grey[300] : Colors.grey[800],
+                                color: isDark
+                                    ? Colors.grey[300]
+                                    : Colors.grey[800],
                               ),
                             ),
                           ),
@@ -659,9 +702,19 @@ class _InjuryDetailScreenState extends ConsumerState<InjuryDetailScreen> {
                         icon: Icons.shield,
                         title: 'Rescuer Information',
                         children: [
-                          _buildInfoRow(Icons.person_outline, 'Name', injury.rescuerName, isDark),
+                          _buildInfoRow(
+                            Icons.person_outline,
+                            'Name',
+                            injury.rescuerName,
+                            isDark,
+                          ),
                           const SizedBox(height: 12),
-                          _buildInfoRow(Icons.email_outlined, 'Email', injury.rescuerEmail, isDark),
+                          _buildInfoRow(
+                            Icons.email_outlined,
+                            'Email',
+                            injury.rescuerEmail,
+                            isDark,
+                          ),
                         ],
                       ),
 
@@ -688,7 +741,8 @@ class _InjuryDetailScreenState extends ConsumerState<InjuryDetailScreen> {
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF2A2A2A) : Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: isDark ? Border.all(color: Colors.white.withValues(alpha: 0.1)) : null,
+        border:
+        isDark ? Border.all(color: Colors.white.withValues(alpha: 0.1)) : null,
         boxShadow: isDark
             ? null
             : [
@@ -844,13 +898,18 @@ class _StatusEditorState extends State<_StatusEditor> {
             style: ElevatedButton.styleFrom(
               backgroundColor: widget.statusColor(_selected),
               foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
             child: widget.saving
                 ? const SizedBox(
               width: 22,
               height: 22,
-              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: Colors.white,
+              ),
             )
                 : Text('Save Status: ${_selected.toUpperCase()}'),
           ),

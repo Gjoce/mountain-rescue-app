@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../state/providers/auth_provider.dart';
-import 'register_screen.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -70,15 +69,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             end: Alignment.bottomRight,
             colors: isDark
                 ? [
-                    const Color(0xFF1A237E),
-                    const Color(0xFF0D47A1),
-                    const Color(0xFF01579B),
-                  ]
+              const Color(0xFF1A237E),
+              const Color(0xFF0D47A1),
+              const Color(0xFF01579B),
+            ]
                 : [
-                    const Color(0xFF1565C0),
-                    const Color(0xFF1976D2),
-                    const Color(0xFF42A5F5),
-                  ],
+              const Color(0xFF1565C0),
+              const Color(0xFF1976D2),
+              const Color(0xFF42A5F5),
+            ],
           ),
         ),
         child: SafeArea(
@@ -105,7 +104,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ),
                   ),
                   const SizedBox(height: 24),
-
                   const Text(
                     'Mountain Rescue',
                     style: TextStyle(
@@ -125,7 +123,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ),
                   ),
                   const SizedBox(height: 48),
-
                   Container(
                     constraints: BoxConstraints(
                       maxWidth: size.width > 600 ? 400 : double.infinity,
@@ -166,7 +163,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 32),
-
                           TextFormField(
                             controller: _emailController,
                             keyboardType: TextInputType.emailAddress,
@@ -178,9 +174,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
-                                  color: Colors.grey[300]!,
-                                ),
+                                borderSide: BorderSide(color: Colors.grey[300]!),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
@@ -201,7 +195,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             },
                           ),
                           const SizedBox(height: 16),
-
                           TextFormField(
                             controller: _passwordController,
                             obscureText: _obscurePassword,
@@ -225,9 +218,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
-                                  color: Colors.grey[300]!,
-                                ),
+                                borderSide: BorderSide(color: Colors.grey[300]!),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
@@ -245,7 +236,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             },
                           ),
                           const SizedBox(height: 24),
-
                           SizedBox(
                             height: 52,
                             child: ElevatedButton(
@@ -260,66 +250,30 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               ),
                               child: _isLoading
                                   ? const SizedBox(
-                                      height: 24,
-                                      width: 24,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2.5,
-                                        valueColor:
-                                            AlwaysStoppedAnimation<Color>(
-                                              Colors.white,
-                                            ),
-                                      ),
-                                    )
+                                height: 24,
+                                width: 24,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2.5,
+                                  valueColor:
+                                  AlwaysStoppedAnimation<Color>(
+                                    Colors.white,
+                                  ),
+                                ),
+                              )
                                   : const Text(
-                                      'Sign In',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                "Don't have an account? ",
+                                'Sign In',
                                 style: TextStyle(
-                                  color: Colors.grey[600],
-                                  fontSize: 14,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
-                              TextButton(
-                                onPressed: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => const RegisterScreen(),
-                                  ),
-                                ),
-                                style: TextButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                  ),
-                                ),
-                                child: const Text(
-                                  'Register',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    color: Color(0xFF1565C0),
-                                  ),
-                                ),
-                              ),
-                            ],
+                            ),
                           ),
                         ],
                       ),
                     ),
                   ),
                   const SizedBox(height: 24),
-
                   Text(
                     '© 2025 Mountain Rescue • Ski Patrol',
                     style: TextStyle(

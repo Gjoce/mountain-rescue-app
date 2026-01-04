@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:archive/archive.dart';
@@ -15,6 +14,7 @@ import 'admin_injuries_screen.dart';
 import 'admin_settings_screen.dart';
 import 'add_rescuer_screen.dart';
 import 'manage_rescuers_screen.dart';
+import 'slopes_map_screen.dart';
 
 class AdminHomeScreen extends ConsumerWidget {
   const AdminHomeScreen({super.key});
@@ -64,9 +64,12 @@ class AdminHomeScreen extends ConsumerWidget {
     final monthStart = _startOfMonth(now);
 
     final totalInjuriesFuture = fs.collection('injuries').count().get();
+
+    // ✅ FIX: count ONLY active rescuers
     final activeRescuersFuture = fs
         .collection('users')
         .where('role', isEqualTo: 'rescuer')
+        .where('isActive', isEqualTo: true)
         .count()
         .get();
 
@@ -578,13 +581,12 @@ class AdminHomeScreen extends ConsumerWidget {
                                   Color(0xFF0D47A1),
                                 ],
                               ),
-                              onTap: () {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Opening injury map...'),
-                                  ),
-                                );
-                              },
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (_) => const SlopesMapScreen()),
+                                  );
+                                },
                             ),
                             const SizedBox(height: 12),
                             _ActionButton(
@@ -753,8 +755,9 @@ class _StatCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF2A2A2A) : Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border:
-        isDark ? Border.all(color: Colors.white.withValues(alpha: 0.1)) : null,
+        border: isDark
+            ? Border.all(color: Colors.white.withValues(alpha: 0.1))
+            : null,
         boxShadow: isDark
             ? null
             : [
@@ -794,7 +797,10 @@ class _StatCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 4),
-              Text(title, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+              Text(
+                title,
+                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+              ),
             ],
           ),
         ],
@@ -873,7 +879,11 @@ class _ActionButton extends StatelessWidget {
                     ],
                   ),
                 ),
-                const Icon(Icons.arrow_forward_ios, color: Colors.white, size: 18),
+                const Icon(
+                  Icons.arrow_forward_ios,
+                  color: Colors.white,
+                  size: 18,
+                ),
               ],
             ),
           ),

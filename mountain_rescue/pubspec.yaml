@@ -40,7 +40,8 @@ dependencies:
   url_launcher: ^6.3.0
   package_info_plus: ^8.0.0
   image_picker: ^1.1.2
-
+  flutter_map: ^7.0.2
+  latlong2: ^0.9.1
 
   # PDF, Printing, and Date Formatting
   pdf: ^3.11.0
@@ -77,6 +78,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/human-body-frontal.png
+    - assets/maps/pohorje_slopes.jpg
 
   # To add assets to your application, add an assets section, like this:
   # assets:
