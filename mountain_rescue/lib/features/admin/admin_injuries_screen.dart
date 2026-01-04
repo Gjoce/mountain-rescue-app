@@ -811,10 +811,9 @@ class _AdminInjuryVM {
       }
     }
     if (summary.isEmpty) summary = (d['injuryType'] ?? '').toString().trim();
-    if (summary.isEmpty)
-      {
+    if (summary.isEmpty) {
       summary = (d['description'] ?? 'No details').toString().trim();
-  }
+    }
 
     return _AdminInjuryVM(
       id: doc.id,
