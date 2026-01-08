@@ -1,23 +1,25 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../models/injury_model.dart';
-import 'dart:typed_data';
-// ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
+// ignore: depend_on_referenced_packages
 import 'package:http_parser/http_parser.dart';
+
+import '../models/injury_model.dart';
 
 class InjuryRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final String _collectionName = 'injuries';
+
   final String bucketName = 'injury-files';
   final String apiUrl =
       "https://hrghcaaqxkznzpwexuaq.supabase.co/functions/v1/upload_injury_photo";
 
   Stream<List<Injury>> getInjuriesByRescuer(String rescuerId) {
     return _firestore
-        .collection('injuries')
+        .collection(_collectionName)
         .where('rescuerId', isEqualTo: rescuerId)
         .orderBy('timestamp', descending: true)
         .snapshots()
@@ -29,7 +31,7 @@ class InjuryRepository {
   }
 
   Future<Injury?> getInjuryById(String id) async {
-    final doc = await _firestore.collection('injuries').doc(id).get();
+    final doc = await _firestore.collection(_collectionName).doc(id).get();
     if (!doc.exists) return null;
     return Injury.fromMap(doc.data()!, doc.id);
   }
@@ -83,7 +85,22 @@ class InjuryRepository {
         );
   }
 
-  Stream<List<Injury>> getInjuriesBySlope(String skiSlope) {
+  // ✅ UPDATED: slope is now identified by slopeId (int) instead of skiSlope (string)
+  Stream<List<Injury>> getInjuriesBySlopeId(int slopeId) {
+    return _firestore
+        .collection(_collectionName)
+        .where('slopeId', isEqualTo: slopeId)
+        .orderBy('timestamp', descending: true)
+        .snapshots()
+        .map(
+          (snapshot) => snapshot.docs
+              .map((doc) => Injury.fromMap(doc.data(), doc.id))
+              .toList(),
+        );
+  }
+
+  // ✅ OPTIONAL (backward compatibility): still supports old string field if you need it
+  Stream<List<Injury>> getInjuriesByLegacySkiSlope(String skiSlope) {
     return _firestore
         .collection(_collectionName)
         .where('skiSlope', isEqualTo: skiSlope)
@@ -169,6 +186,7 @@ class InjuryRepository {
         );
   }
 
+  // ✅ UPDATED: statistics now count by slopeId + slopeName (new fields)
   Future<Map<String, dynamic>> getInjuryStatistics() async {
     try {
       final snapshot = await _firestore.collection(_collectionName).get();
@@ -180,11 +198,14 @@ class InjuryRepository {
       final severityCounts = <String, int>{};
       final slopeCounts = <String, int>{};
 
-      for (var injury in injuries) {
+      for (final injury in injuries) {
         statusCounts[injury.status] = (statusCounts[injury.status] ?? 0) + 1;
         severityCounts[injury.severity] =
             (severityCounts[injury.severity] ?? 0) + 1;
-        slopeCounts[injury.skiSlope] = (slopeCounts[injury.skiSlope] ?? 0) + 1;
+
+        // Example key: "12 - Slope 12"
+        final slopeKey = '${injury.slopeId} - ${injury.slopeName}';
+        slopeCounts[slopeKey] = (slopeCounts[slopeKey] ?? 0) + 1;
       }
 
       return {
@@ -202,13 +223,17 @@ class InjuryRepository {
     final user = FirebaseAuth.instance.currentUser;
     final userId = user?.uid;
 
+    if (userId == null) {
+      throw Exception('User not authenticated');
+    }
+
     final request = http.MultipartRequest(
       "POST",
       Uri.parse("$apiUrl/upload-id-photo"),
     );
 
     request.fields["injuryId"] = injuryId;
-    request.fields["userId"] = userId!;
+    request.fields["userId"] = userId;
 
     request.files.add(
       http.MultipartFile.fromBytes(
@@ -230,7 +255,6 @@ class InjuryRepository {
     }
 
     final Map<String, dynamic> json = jsonDecode(body);
-
     final String publicUrl = json['filePath'] as String;
 
     return publicUrl;

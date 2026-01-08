@@ -29,12 +29,17 @@ class Injury {
 
   final List<InjuryDetail> injuries;
   final String severity;
-  final String skiSlope;
+
+  // ✅ NEW: slope id + name (for map-based slopes)
+  final int slopeId;
+  final String slopeName;
+
   final String description;
 
   final DateTime timestamp;
   final String status;
-  final String? photoUrl; // To be implemented
+
+  final String? photoUrl;
   final String? signatureUrl;
 
   Injury({
@@ -46,15 +51,19 @@ class Injury {
     required this.patientBirthDate,
     required this.injuries,
     required this.severity,
-    required this.skiSlope,
+    required this.slopeId,
+    required this.slopeName,
     required this.description,
     required this.timestamp,
     required this.status,
-    this.photoUrl, // To be implemented
+    this.photoUrl,
     this.signatureUrl,
   });
 
   factory Injury.fromMap(Map<String, dynamic> data, String id) {
+    // Backward compatibility (if you previously saved only "skiSlope")
+    final legacySlope = (data['skiSlope'] ?? '').toString();
+
     return Injury(
       id: id,
       rescuerId: data['rescuerId'] ?? '',
@@ -70,11 +79,17 @@ class Injury {
               .toList() ??
           [],
       severity: data['severity'] ?? 'minor',
-      skiSlope: data['skiSlope'] ?? '',
+
+      // ✅ NEW fields (fallback to legacy where possible)
+      slopeId: (data['slopeId'] is int)
+          ? data['slopeId'] as int
+          : int.tryParse((data['slopeId'] ?? '').toString()) ?? -1,
+      slopeName: (data['slopeName'] ?? legacySlope).toString(),
+
       description: data['description'] ?? '',
       timestamp: (data['timestamp'] as Timestamp).toDate(),
       status: data['status'] ?? 'pending',
-      photoUrl: data['photoUrl'], // To be implemented
+      photoUrl: data['photoUrl'],
       signatureUrl: data['signatureUrl'],
     );
   }
@@ -88,11 +103,15 @@ class Injury {
       'patientBirthDate': Timestamp.fromDate(patientBirthDate),
       'injuries': injuries.map((injury) => injury.toMap()).toList(),
       'severity': severity,
-      'skiSlope': skiSlope,
+
+      // ✅ NEW: saved to Firestore for map + filtering
+      'slopeId': slopeId,
+      'slopeName': slopeName,
+
       'description': description,
       'timestamp': Timestamp.fromDate(timestamp),
       'status': status,
-      'photoUrl': photoUrl, // To be implemented
+      'photoUrl': photoUrl,
       'signatureUrl': signatureUrl,
     };
   }
@@ -129,10 +148,13 @@ class Injury {
     DateTime? patientBirthDate,
     List<InjuryDetail>? injuries,
     String? severity,
-    String? skiSlope,
+    int? slopeId,
+    String? slopeName,
     String? description,
     DateTime? timestamp,
     String? status,
+    String? photoUrl,
+    String? signatureUrl,
   }) {
     return Injury(
       id: id ?? this.id,
@@ -143,10 +165,13 @@ class Injury {
       patientBirthDate: patientBirthDate ?? this.patientBirthDate,
       injuries: injuries ?? this.injuries,
       severity: severity ?? this.severity,
-      skiSlope: skiSlope ?? this.skiSlope,
+      slopeId: slopeId ?? this.slopeId,
+      slopeName: slopeName ?? this.slopeName,
       description: description ?? this.description,
       timestamp: timestamp ?? this.timestamp,
       status: status ?? this.status,
+      photoUrl: photoUrl ?? this.photoUrl,
+      signatureUrl: signatureUrl ?? this.signatureUrl,
     );
   }
 }

@@ -72,6 +72,12 @@ class RescuerHomeScreen extends ConsumerWidget {
             data: (user) {
               final rescuerName = user?.name ?? "Rescuer";
 
+              // NEW: dynamic status (default true if user is null)
+              final isActive = user?.isActive ?? true;
+
+              final statusLabel = isActive ? 'ACTIVE' : 'NOT ACTIVE';
+              final statusColor = isActive ? Colors.green : Colors.red;
+
               return Column(
                 children: [
                   Padding(
@@ -153,12 +159,12 @@ class RescuerHomeScreen extends ConsumerWidget {
                                   vertical: 4,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: Colors.green,
+                                  color: statusColor,
                                   borderRadius: BorderRadius.circular(8),
                                 ),
-                                child: const Text(
-                                  'ACTIVE',
-                                  style: TextStyle(
+                                child: Text(
+                                  statusLabel,
+                                  style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 12,
                                     fontWeight: FontWeight.bold,
@@ -171,7 +177,6 @@ class RescuerHomeScreen extends ConsumerWidget {
                       ],
                     ),
                   ),
-
                   Expanded(
                     child: Container(
                       decoration: BoxDecoration(
@@ -197,7 +202,6 @@ class RescuerHomeScreen extends ConsumerWidget {
                               ),
                             ),
                             const SizedBox(height: 20),
-
                             _PrimaryActionCard(
                               icon: Icons.add_circle,
                               title: 'Register an Injury',
@@ -215,9 +219,7 @@ class RescuerHomeScreen extends ConsumerWidget {
                                 );
                               },
                             ),
-
                             const SizedBox(height: 16),
-
                             GridView.count(
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
@@ -258,9 +260,7 @@ class RescuerHomeScreen extends ConsumerWidget {
                                 ),
                               ],
                             ),
-
                             const SizedBox(height: 24),
-
                             OutlinedButton.icon(
                               onPressed: () => _showLogoutDialog(context, ref),
                               icon: const Icon(Icons.logout),
@@ -283,9 +283,7 @@ class RescuerHomeScreen extends ConsumerWidget {
                                 ),
                               ),
                             ),
-
                             const SizedBox(height: 16),
-
                             Center(
                               child: Text(
                                 'Mountain Rescue • Ski Patrol System',

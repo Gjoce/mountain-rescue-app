@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 class ManageRescuersScreen extends StatelessWidget {
   const ManageRescuersScreen({super.key});
 
+  Color _statusColor(bool isActive) => isActive ? Colors.green : Colors.red;
+
   @override
   Widget build(BuildContext context) {
     final usersStream = FirebaseFirestore.instance
@@ -30,8 +32,9 @@ class ManageRescuersScreen extends StatelessWidget {
             );
           }
 
+          final rescuers = snapshot.data!.docs.toList();
+
           // Sort locally by creation date
-          final rescuers = snapshot.data!.docs;
           rescuers.sort((a, b) {
             final aTime =
                 (a['createdAt'] as Timestamp?)?.toDate() ?? DateTime(0);
@@ -47,6 +50,13 @@ class ManageRescuersScreen extends StatelessWidget {
               final rescuer = rescuers[index].data() as Map<String, dynamic>;
               final docId = rescuers[index].id;
 
+              final name = (rescuer['name'] ?? 'Unknown Rescuer').toString();
+              final email = (rescuer['email'] ?? '').toString();
+              final createdAt = (rescuer['createdAt'] as Timestamp?)?.toDate();
+              final isActive = (rescuer['isActive'] is bool)
+                  ? rescuer['isActive'] as bool
+                  : true; // default active
+
               return Card(
                 margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                 elevation: 2,
@@ -57,23 +67,53 @@ class ManageRescuersScreen extends StatelessWidget {
                   leading: CircleAvatar(
                     backgroundColor: const Color(0xFF1565C0),
                     child: Text(
-                      rescuer['name'] != null && rescuer['name'].isNotEmpty
-                          ? rescuer['name'][0].toUpperCase()
-                          : '?',
+                      name.isNotEmpty ? name[0].toUpperCase() : '?',
                       style: const TextStyle(color: Colors.white),
                     ),
                   ),
-                  title: Text(
-                    rescuer['name'] ?? 'Unknown Rescuer',
-                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  title: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          name,
+                          style: const TextStyle(fontWeight: FontWeight.w600),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: _statusColor(isActive).withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: _statusColor(
+                              isActive,
+                            ).withValues(alpha: 0.45),
+                          ),
+                        ),
+                        child: Text(
+                          isActive ? 'ACTIVE' : 'INACTIVE',
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            color: _statusColor(isActive),
+                            letterSpacing: 0.4,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(rescuer['email'] ?? ''),
-                      if (rescuer['createdAt'] != null)
+                      if (email.isNotEmpty) Text(email),
+                      if (createdAt != null)
                         Text(
-                          'Joined: ${(rescuer['createdAt'] as Timestamp).toDate().toLocal().toString().split(' ')[0]}',
+                          'Joined: ${createdAt.toLocal().toString().split(' ')[0]}',
                           style: TextStyle(
                             color: Colors.grey[600],
                             fontSize: 12,
@@ -112,9 +152,8 @@ class ManageRescuersScreen extends StatelessWidget {
                         }
                       }
                     },
-
-                    itemBuilder: (_) => [
-                      const PopupMenuItem(
+                    itemBuilder: (_) => const [
+                      PopupMenuItem(
                         value: 'promote',
                         child: Row(
                           children: [
@@ -124,7 +163,7 @@ class ManageRescuersScreen extends StatelessWidget {
                           ],
                         ),
                       ),
-                      const PopupMenuItem(
+                      PopupMenuItem(
                         value: 'delete',
                         child: Row(
                           children: [

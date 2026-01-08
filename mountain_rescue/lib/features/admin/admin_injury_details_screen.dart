@@ -12,7 +12,7 @@ class AdminInjuriesScreen extends StatefulWidget {
 }
 
 class _AdminInjuriesScreenState extends State<AdminInjuriesScreen> {
-  String _selectedFilter = 'all';
+  String _selectedStatus = 'all';
   String _selectedSeverity = 'all';
 
   Color _severityColor(String severity) {
@@ -58,101 +58,122 @@ class _AdminInjuriesScreenState extends State<AdminInjuriesScreen> {
     }
   }
 
+  String _safeString(dynamic v, String fallback) {
+    if (v == null) return fallback;
+    final s = v.toString().trim();
+    return s.isEmpty ? fallback : s;
+  }
+
+  DateTime _safeTimestamp(dynamic v) {
+    if (v is Timestamp) return v.toDate();
+    return DateTime.now();
+  }
+
+  int _countWhere(
+    List<QueryDocumentSnapshot<Map<String, dynamic>>> docs,
+    bool Function(Map<String, dynamic> d) predicate,
+  ) {
+    var c = 0;
+    for (final doc in docs) {
+      if (predicate(doc.data())) c++;
+    }
+    return c;
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final stream = FirebaseFirestore.instance
-        .collection('injuries')
-        .orderBy('timestamp', descending: true)
-        .snapshots();
-
-    return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-      stream: stream,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Scaffold(
-            backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.grey[50],
-            body: const Center(
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF1565C0)),
-              ),
-            ),
-          );
-        }
-
-        if (snapshot.hasError) {
-          return Scaffold(
-            backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.grey[50],
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.error_outline, size: 64, color: Colors.red[300]),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Error loading injuries',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: isDark ? Colors.white : Colors.grey[800],
+    return Scaffold(
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xFF1565C0), Color(0xFF0D47A1)],
+          ),
+        ),
+        child: SafeArea(
+          child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+            stream: FirebaseFirestore.instance
+                .collection('injuries')
+                .orderBy('timestamp', descending: true)
+                .snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Scaffold(
+                  backgroundColor: isDark
+                      ? const Color(0xFF1E1E1E)
+                      : Colors.grey[50],
+                  body: const Center(
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        Color(0xFF1565C0),
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  Text(
-                    snapshot.error.toString(),
-                    style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
-            ),
-          );
-        }
+                );
+              }
 
-        final docs = snapshot.data?.docs ?? const [];
-        final injuryList = docs.map((d) => _AdminInjuryVM.fromDoc(d)).toList();
+              if (snapshot.hasError) {
+                return _errorState(isDark, snapshot.error.toString());
+              }
 
-        var filteredList = injuryList;
+              final docs = snapshot.data?.docs ?? const [];
+              final total = docs.length;
+              final approved = _countWhere(
+                docs,
+                (d) =>
+                    _safeString(d['status'], 'pending').toLowerCase() ==
+                    'approved',
+              );
 
-        if (_selectedFilter != 'all') {
-          filteredList = filteredList
-              .where((injury) => injury.status == _selectedFilter)
-              .toList();
-        }
+              // apply filters
+              var filtered = docs;
 
-        if (_selectedSeverity != 'all') {
-          filteredList = filteredList
-              .where((injury) => injury.severity == _selectedSeverity)
-              .toList();
-        }
+              if (_selectedStatus != 'all') {
+                filtered = filtered
+                    .where(
+                      (doc) =>
+                          _safeString(
+                            doc.data()['status'],
+                            'pending',
+                          ).toLowerCase() ==
+                          _selectedStatus,
+                    )
+                    .toList();
+              }
 
-        return Scaffold(
-          body: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [Color(0xFF1565C0), Color(0xFF0D47A1)],
-              ),
-            ),
-            child: SafeArea(
-              child: Column(
+              if (_selectedSeverity != 'all') {
+                filtered = filtered
+                    .where(
+                      (doc) =>
+                          _safeString(
+                            doc.data()['severity'],
+                            '',
+                          ).toLowerCase() ==
+                          _selectedSeverity,
+                    )
+                    .toList();
+              }
+
+              return Column(
                 children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Column(
                       children: [
                         const SizedBox(height: 8),
-                        _buildTopBar(injuryList),
+                        _buildTopBar(total),
                         const SizedBox(height: 16),
-                        _buildStatsMini(injuryList),
+                        _buildStatsMini(total: total, approved: approved),
                         const SizedBox(height: 16),
-                        _buildFilterDropdowns(isDark),
+                        _buildFilterDropdowns(),
                         const SizedBox(height: 16),
                       ],
                     ),
                   ),
+
                   Expanded(
                     child: Container(
                       decoration: BoxDecoration(
@@ -167,7 +188,7 @@ class _AdminInjuriesScreenState extends State<AdminInjuriesScreen> {
                           topLeft: Radius.circular(30),
                           topRight: Radius.circular(30),
                         ),
-                        child: filteredList.isEmpty
+                        child: filtered.isEmpty
                             ? Padding(
                                 padding: const EdgeInsets.all(16.0),
                                 child: _buildEmptyState(isDark),
@@ -175,20 +196,22 @@ class _AdminInjuriesScreenState extends State<AdminInjuriesScreen> {
                             : RefreshIndicator(
                                 color: const Color(0xFF1565C0),
                                 onRefresh: () async {
-                                  // StreamBuilder refreshes automatically; this just gives UX parity.
-                                  await Future<void>.delayed(
-                                    const Duration(milliseconds: 250),
-                                  );
+                                  setState(() {}); // stream refreshes itself
                                 },
                                 child: ListView.builder(
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 16,
                                     vertical: 16,
                                   ),
-                                  itemCount: filteredList.length,
+                                  itemCount: filtered.length,
                                   itemBuilder: (context, index) {
-                                    final injury = filteredList[index];
-                                    return _buildInjuryCard(injury, isDark);
+                                    final doc = filtered[index];
+                                    final data = doc.data();
+                                    return _buildInjuryCard(
+                                      isDark: isDark,
+                                      docId: doc.id,
+                                      data: data,
+                                    );
                                   },
                                 ),
                               ),
@@ -196,15 +219,21 @@ class _AdminInjuriesScreenState extends State<AdminInjuriesScreen> {
                     ),
                   ),
                 ],
-              ),
-            ),
+              );
+            },
           ),
-        );
-      },
+        ),
+      ),
+      appBar: AppBar(
+        title: const Text('All Injury Reports'),
+        backgroundColor: const Color(0xFF1565C0),
+        foregroundColor: Colors.white,
+        elevation: 0,
+      ),
     );
   }
 
-  Widget _buildTopBar(List<_AdminInjuryVM> injuryList) {
+  Widget _buildTopBar(int total) {
     return Row(
       children: [
         GestureDetector(
@@ -239,7 +268,7 @@ class _AdminInjuriesScreenState extends State<AdminInjuriesScreen> {
             borderRadius: BorderRadius.circular(20),
           ),
           child: Text(
-            '${injuryList.length} total',
+            '$total total',
             style: const TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.bold,
@@ -251,10 +280,7 @@ class _AdminInjuriesScreenState extends State<AdminInjuriesScreen> {
     );
   }
 
-  Widget _buildStatsMini(List<_AdminInjuryVM> injuries) {
-    final total = injuries.length;
-    final approved = injuries.where((i) => i.status == 'approved').length;
-
+  Widget _buildStatsMini({required int total, required int approved}) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
@@ -300,14 +326,14 @@ class _AdminInjuriesScreenState extends State<AdminInjuriesScreen> {
     );
   }
 
-  Widget _buildFilterDropdowns(bool isDark) {
+  Widget _buildFilterDropdowns() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
         children: [
           Expanded(
             child: _buildDropdown(
-              value: _selectedFilter,
+              value: _selectedStatus,
               items: const [
                 DropdownMenuItem(
                   value: 'all',
@@ -366,8 +392,8 @@ class _AdminInjuriesScreenState extends State<AdminInjuriesScreen> {
                   ),
                 ),
               ],
-              onChanged: (value) {
-                if (value != null) setState(() => _selectedFilter = value);
+              onChanged: (v) {
+                if (v != null) setState(() => _selectedStatus = v);
               },
             ),
           ),
@@ -435,8 +461,8 @@ class _AdminInjuriesScreenState extends State<AdminInjuriesScreen> {
                   ),
                 ),
               ],
-              onChanged: (value) {
-                if (value != null) setState(() => _selectedSeverity = value);
+              onChanged: (v) {
+                if (v != null) setState(() => _selectedSeverity = v);
               },
             ),
           ),
@@ -487,7 +513,7 @@ class _AdminInjuriesScreenState extends State<AdminInjuriesScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
-            _selectedFilter != 'all' || _selectedSeverity != 'all'
+            _selectedStatus != 'all' || _selectedSeverity != 'all'
                 ? Icons.filter_list_off
                 : Icons.medical_services_outlined,
             size: 80,
@@ -495,7 +521,7 @@ class _AdminInjuriesScreenState extends State<AdminInjuriesScreen> {
           ),
           const SizedBox(height: 24),
           Text(
-            _selectedFilter != 'all' || _selectedSeverity != 'all'
+            _selectedStatus != 'all' || _selectedSeverity != 'all'
                 ? 'No injuries match filters'
                 : 'No injuries recorded yet',
             style: TextStyle(
@@ -506,7 +532,7 @@ class _AdminInjuriesScreenState extends State<AdminInjuriesScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            _selectedFilter != 'all' || _selectedSeverity != 'all'
+            _selectedStatus != 'all' || _selectedSeverity != 'all'
                 ? 'Try adjusting your filters'
                 : 'Injury reports will appear here',
             style: TextStyle(fontSize: 14, color: Colors.grey[600]),
@@ -516,7 +542,62 @@ class _AdminInjuriesScreenState extends State<AdminInjuriesScreen> {
     );
   }
 
-  Widget _buildInjuryCard(_AdminInjuryVM injury, bool isDark) {
+  Widget _errorState(bool isDark, String error) {
+    return Scaffold(
+      backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.grey[50],
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.error_outline, size: 64, color: Colors.red[300]),
+              const SizedBox(height: 16),
+              Text(
+                'Error loading injuries',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: isDark ? Colors.white : Colors.grey[800],
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                error,
+                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInjuryCard({
+    required bool isDark,
+    required String docId,
+    required Map<String, dynamic> data,
+  }) {
+    final severity = _safeString(data['severity'], 'unknown');
+    final status = _safeString(data['status'], 'pending');
+    final patientName = _safeString(data['patientName'], 'Unknown Patient');
+    final skiSlope = _safeString(data['skiSlope'], 'Unknown slope');
+    final rescuerName = _safeString(data['rescuerName'], 'Unknown rescuer');
+    final time = _safeTimestamp(data['timestamp']);
+
+    String summary = '';
+    if (data['injuries'] is List && (data['injuries'] as List).isNotEmpty) {
+      final first = (data['injuries'] as List).first;
+      if (first is Map) {
+        summary = _safeString(first['injuryType'], '');
+      }
+    }
+    if (summary.isEmpty) summary = _safeString(data['injuryType'], '');
+    if (summary.isEmpty) {
+      summary = _safeString(data['description'], 'No details');
+    }
+
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
@@ -536,15 +617,15 @@ class _AdminInjuriesScreenState extends State<AdminInjuriesScreen> {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
+          borderRadius: BorderRadius.circular(16),
           onTap: () {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (_) => InjuryDetailScreen(injuryId: injury.id),
+                builder: (_) => InjuryDetailScreen(injuryId: docId),
               ),
             );
           },
-          borderRadius: BorderRadius.circular(16),
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -558,12 +639,10 @@ class _AdminInjuriesScreenState extends State<AdminInjuriesScreen> {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: _severityColor(
-                          injury.severity,
-                        ).withValues(alpha: 0.2),
+                        color: _severityColor(severity).withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                          color: _severityColor(injury.severity),
+                          color: _severityColor(severity),
                           width: 1.5,
                         ),
                       ),
@@ -571,17 +650,17 @@ class _AdminInjuriesScreenState extends State<AdminInjuriesScreen> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(
-                            _severityIcon(injury.severity),
+                            _severityIcon(severity),
                             size: 16,
-                            color: _severityColor(injury.severity),
+                            color: _severityColor(severity),
                           ),
                           const SizedBox(width: 6),
                           Text(
-                            injury.severity.toUpperCase(),
+                            severity.toUpperCase(),
                             style: TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.bold,
-                              color: _severityColor(injury.severity),
+                              color: _severityColor(severity),
                             ),
                           ),
                         ],
@@ -594,17 +673,15 @@ class _AdminInjuriesScreenState extends State<AdminInjuriesScreen> {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: _statusColor(
-                          injury.status,
-                        ).withValues(alpha: 0.2),
+                        color: _statusColor(status).withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
-                        injury.status.toUpperCase(),
+                        status.toUpperCase(),
                         style: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.bold,
-                          color: _statusColor(injury.status),
+                          color: _statusColor(status),
                         ),
                       ),
                     ),
@@ -617,8 +694,9 @@ class _AdminInjuriesScreenState extends State<AdminInjuriesScreen> {
                   ],
                 ),
                 const SizedBox(height: 16),
+
                 Text(
-                  injury.patientName,
+                  patientName,
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -626,6 +704,7 @@ class _AdminInjuriesScreenState extends State<AdminInjuriesScreen> {
                   ),
                 ),
                 const SizedBox(height: 8),
+
                 Row(
                   children: [
                     Icon(
@@ -636,7 +715,7 @@ class _AdminInjuriesScreenState extends State<AdminInjuriesScreen> {
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        injury.injurySummary,
+                        summary,
                         style: TextStyle(
                           fontSize: 14,
                           color: isDark ? Colors.grey[400] : Colors.grey[700],
@@ -646,6 +725,7 @@ class _AdminInjuriesScreenState extends State<AdminInjuriesScreen> {
                   ],
                 ),
                 const SizedBox(height: 8),
+
                 Row(
                   children: [
                     Icon(
@@ -654,16 +734,40 @@ class _AdminInjuriesScreenState extends State<AdminInjuriesScreen> {
                       color: isDark ? Colors.green[200] : Colors.green,
                     ),
                     const SizedBox(width: 8),
-                    Text(
-                      injury.skiSlope,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: isDark ? Colors.grey[400] : Colors.grey[700],
+                    Expanded(
+                      child: Text(
+                        skiSlope,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: isDark ? Colors.grey[400] : Colors.grey[700],
+                        ),
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 8),
+
+                Row(
+                  children: [
+                    Icon(
+                      Icons.person_outline,
+                      size: 16,
+                      color: isDark ? Colors.purple[200] : Colors.purple,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        rescuerName,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: isDark ? Colors.grey[400] : Colors.grey[700],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+
                 Row(
                   children: [
                     Icon(
@@ -673,9 +777,7 @@ class _AdminInjuriesScreenState extends State<AdminInjuriesScreen> {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      DateFormat(
-                        'dd MMM yyyy • HH:mm',
-                      ).format(injury.timestamp),
+                      DateFormat('dd MMM yyyy • HH:mm').format(time),
                       style: TextStyle(
                         fontSize: 14,
                         color: isDark ? Colors.grey[400] : Colors.grey[700],
@@ -683,148 +785,11 @@ class _AdminInjuriesScreenState extends State<AdminInjuriesScreen> {
                     ),
                   ],
                 ),
-                if (injury.injuryCount > 0) ...[
-                  const SizedBox(height: 12),
-                  const Divider(),
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 6,
-                    runSpacing: 6,
-                    children: [
-                      ...injury.affectedBodyParts
-                          .take(3)
-                          .map(
-                            (part) => Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 10,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: const Color(
-                                  0xFF1565C0,
-                                ).withValues(alpha: 0.15),
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(
-                                  color: const Color(
-                                    0xFF1565C0,
-                                  ).withValues(alpha: 0.35),
-                                ),
-                              ),
-                              child: Text(
-                                part,
-                                style: const TextStyle(
-                                  fontSize: 11,
-                                  color: Color(0xFF1565C0),
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          ),
-                      if (injury.injuryCount > 3)
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.grey.withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Text(
-                            '+${injury.injuryCount - 3} more',
-                            style: TextStyle(
-                              fontSize: 11,
-                              color: Colors.grey[600],
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                    ],
-                  ),
-                ],
               ],
             ),
           ),
         ),
       ),
-    );
-  }
-}
-
-class _AdminInjuryVM {
-  final String id;
-  final String severity; // 'critical' | 'severe' | 'moderate' | 'minor'
-  final String status; // 'pending' | 'approved' | 'denied'
-  final String patientName;
-  final String skiSlope;
-  final DateTime timestamp;
-  final String injurySummary;
-  final int injuryCount;
-  final List<String> affectedBodyParts;
-
-  _AdminInjuryVM({
-    required this.id,
-    required this.severity,
-    required this.status,
-    required this.patientName,
-    required this.skiSlope,
-    required this.timestamp,
-    required this.injurySummary,
-    required this.injuryCount,
-    required this.affectedBodyParts,
-  });
-
-  static _AdminInjuryVM fromDoc(
-    QueryDocumentSnapshot<Map<String, dynamic>> doc,
-  ) {
-    final d = doc.data();
-
-    final ts = (d['timestamp'] is Timestamp)
-        ? (d['timestamp'] as Timestamp).toDate()
-        : DateTime.now();
-
-    final patientName = (d['patientName'] ?? 'Unknown Patient').toString();
-    final severity = (d['severity'] ?? 'unknown').toString().toLowerCase();
-    final status = (d['status'] ?? 'pending').toString().toLowerCase();
-    final skiSlope = (d['skiSlope'] ?? 'Unknown slope').toString();
-
-    final injuriesRaw = (d['injuries'] is List)
-        ? (d['injuries'] as List)
-        : const [];
-    final injuryCount = injuriesRaw.length;
-
-    final parts = <String>[];
-    for (final row in injuriesRaw) {
-      if (row is Map) {
-        final p = (row['bodyPart'] ?? '').toString().trim();
-        if (p.isNotEmpty) parts.add(p);
-      }
-    }
-
-    // Build a short summary similar to your model's `injurySummary`
-    String summary = '';
-    if (injuriesRaw.isNotEmpty) {
-      final first = injuriesRaw.first;
-      if (first is Map) {
-        final t = (first['injuryType'] ?? '').toString().trim();
-        if (t.isNotEmpty) summary = t;
-      }
-    }
-    if (summary.isEmpty) summary = (d['injuryType'] ?? '').toString().trim();
-    if (summary.isEmpty) {
-      summary = (d['description'] ?? 'No details').toString().trim();
-    }
-
-    return _AdminInjuryVM(
-      id: doc.id,
-      severity: severity,
-      status: status,
-      patientName: patientName,
-      skiSlope: skiSlope,
-      timestamp: ts,
-      injurySummary: summary,
-      injuryCount: injuryCount,
-      affectedBodyParts: parts,
     );
   }
 }

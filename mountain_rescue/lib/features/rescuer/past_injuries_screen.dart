@@ -59,6 +59,21 @@ class _PastInjuriesScreenState extends ConsumerState<PastInjuriesScreen> {
     }
   }
 
+  /// ✅ FIX: your Injury model uses slopeName/slopeId, not skiSlope
+  String _slopeText(dynamic injury) {
+    try {
+      final name = (injury.slopeName ?? '').toString().trim();
+      if (name.isNotEmpty) return name;
+
+      final id = injury.slopeId;
+      if (id != null) return 'Slope #$id';
+
+      return 'Unknown slope';
+    } catch (_) {
+      return 'Unknown slope';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -126,7 +141,6 @@ class _PastInjuriesScreenState extends ConsumerState<PastInjuriesScreen> {
                           ],
                         ),
                       ),
-
                       Expanded(
                         child: Container(
                           decoration: BoxDecoration(
@@ -390,9 +404,7 @@ class _PastInjuriesScreenState extends ConsumerState<PastInjuriesScreen> {
                 ),
               ],
               onChanged: (value) {
-                if (value != null) {
-                  setState(() => _selectedFilter = value);
-                }
+                if (value != null) setState(() => _selectedFilter = value);
               },
             ),
           ),
@@ -461,9 +473,7 @@ class _PastInjuriesScreenState extends ConsumerState<PastInjuriesScreen> {
                 ),
               ],
               onChanged: (value) {
-                if (value != null) {
-                  setState(() => _selectedSeverity = value);
-                }
+                if (value != null) setState(() => _selectedSeverity = value);
               },
             ),
           ),
@@ -614,9 +624,7 @@ class _PastInjuriesScreenState extends ConsumerState<PastInjuriesScreen> {
                         ],
                       ),
                     ),
-
                     const SizedBox(width: 8),
-
                     Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 12,
@@ -637,9 +645,7 @@ class _PastInjuriesScreenState extends ConsumerState<PastInjuriesScreen> {
                         ),
                       ),
                     ),
-
                     const Spacer(),
-
                     Icon(
                       Icons.arrow_forward_ios,
                       size: 16,
@@ -648,7 +654,6 @@ class _PastInjuriesScreenState extends ConsumerState<PastInjuriesScreen> {
                   ],
                 ),
                 const SizedBox(height: 16),
-
                 Text(
                   injury.patientName,
                   style: TextStyle(
@@ -658,7 +663,6 @@ class _PastInjuriesScreenState extends ConsumerState<PastInjuriesScreen> {
                   ),
                 ),
                 const SizedBox(height: 8),
-
                 Row(
                   children: [
                     Icon(
@@ -679,7 +683,6 @@ class _PastInjuriesScreenState extends ConsumerState<PastInjuriesScreen> {
                   ],
                 ),
                 const SizedBox(height: 8),
-
                 Row(
                   children: [
                     Icon(
@@ -689,7 +692,7 @@ class _PastInjuriesScreenState extends ConsumerState<PastInjuriesScreen> {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      injury.skiSlope,
+                      _slopeText(injury), // ✅ FIX HERE
                       style: TextStyle(
                         fontSize: 14,
                         color: isDark ? Colors.grey[400] : Colors.grey[700],
@@ -698,7 +701,6 @@ class _PastInjuriesScreenState extends ConsumerState<PastInjuriesScreen> {
                   ],
                 ),
                 const SizedBox(height: 8),
-
                 Row(
                   children: [
                     Icon(
@@ -718,7 +720,6 @@ class _PastInjuriesScreenState extends ConsumerState<PastInjuriesScreen> {
                     ),
                   ],
                 ),
-
                 if (injury.injuryCount > 0) ...[
                   const SizedBox(height: 12),
                   const Divider(),
