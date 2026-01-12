@@ -247,6 +247,59 @@ The system uses the **Dart `pdf`** package to generate detailed and print-ready 
 ![alt text](8.png)
 ![alt text](9.png)
 
+## Vodič za ponovitev ključne funkcionalnosti
+
+Ta vodič ponuja hiter in strukturiran pregled glavnih funkcionalnosti aplikacije **Mountain Rescue**, namenjen ponovitvi ali demonstraciji sistema.
+
+### 1. Prijava in vloge uporabnikov
+
+- Uporabniki se prijavijo ali registrirajo prek **Firebase Authentication**
+- Ob registraciji se dodeli vloga:
+  - **Rescuer** – reševalec na terenu
+  - **Admin** – skrbnik sistema
+- Dostop do funkcionalnosti je omejen glede na vlogo (Firestore Security Rules)
+
+### 2. Registracija poškodbe (Rescuer)
+
+- Rescuer lahko:
+  - vnese podatke o poškodovancu
+  - določi stopnjo poškodbe (`mild`, `moderate`, `severe`)
+  - izbere smučišče oziroma lokacijo
+  - doda fotografije in opis poškodbe
+- Podatki se shranijo v **Firestore (injuries collection)**
+
+### 3. Pregled in upravljanje poročil
+
+- Rescuer:
+  - pregleda svoja pretekla poročila
+  - ustvari **PDF poročilo** za posamezno poškodbo
+- Admin:
+  - vidi vsa poročila vseh reševalcev
+  - pregleda podrobnosti posameznih poškodb
+  - izvaža sistemska PDF poročila
+
+### 4. Upravljanje uporabnikov (Admin)
+
+- Admin lahko:
+  - pregleda profile reševalcev
+  - upravlja sistemske nastavitve
+  - ureja svoj profil (ime, fotografija, geslo)
+
+### 5. PDF poročila
+
+- Samodejno generirana poročila vključujejo:
+  - podatke o poškodbi
+  - lokacijo in čas dogodka
+  - stopnjo poškodbe in opis
+  - podatke o odgovornem reševalcu
+- Poročila so pripravljena za tisk ali deljenje
+
+### 6. Varnost in shranjevanje podatkov
+
+- Avtentikacija in avtorizacija: **Firebase Authentication & Firestore Rules**
+- Fotografije poškodb in profila: **Supabase Storage**
+- Dostop do datotek je nadzorovan s podpisanimi URL-ji
+
 # Authors
 
 **Andrej Delimanchev**
